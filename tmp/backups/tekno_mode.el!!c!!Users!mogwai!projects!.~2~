@@ -1,0 +1,3 @@
+(require 'clomacs)
+(clomacs-defun get-property System/getProperty)
+(message (get-property "java.version"))

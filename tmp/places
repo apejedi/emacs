@@ -1,0 +1,252 @@
+;;; -*- coding: utf-8 -*-
+(("c:/Users/mogwai/projects/techno/src/techno/motifs.clj" . 4660)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/music/pitch.clj" . 16359)
+ ("c:/Users/mogwai/projects/techno/src/techno/drum_patterns.clj" . 11404)
+ ("c:/Users/mogwai/Google Drive/log.org" . 4233)
+ ("c:/Users/mogwai/projects/techno/src/techno/synths.clj" . 9660)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/clomacs.el" . 4265)
+ ("c:/Users/mogwai/.emacs.d/ctable.el" . 57551)
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches.clj" . 17209)
+ ("c:/Users/mogwai/projects/tekno_mode.el" . 144)
+ ("c:/Users/mogwai/projects/techno/src/techno/core.clj" . 619)
+ ("c:/Users/mogwai/.emacs.d/ido.last" . 36411)
+ ("c:/Users/mogwai/.emacs" . 1893)
+ ("c:/Users/mogwai/Google Drive/todo.org" . 142)
+ ("c:/Users/mogwai/projects/techno/src/techno/sequencer.clj" . 21400)
+ ("c:/Users/mogwai/projects/techno/src/techno/samples.clj" . 130)
+ ("c:/Users/mogwai/projects/"
+  (dired-filename . "c:/Users/mogwai/projects/radiohead"))
+ ("c:/Users/mogwai/.lein/profiles.clj" . 206)
+ ("c:/Users/mogwai/projects/techno/project.clj" . 206)
+ ("c:/Users/mogwai/projects/techno/src/techno/recorder.clj" . 1936)
+ ("c:/Users/mogwai/projects/techno/src/techno/controller.clj" . 8495)
+ ("c:/Users/mogwai/projects/techno/src/techno/drums.clj" . 4670)
+ ("c:/Users/mogwai/.emacs.d/init.el" . 6888)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/info.el" . 114)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/init.el" . 329)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/"
+  (dired-filename . "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs"))
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/"
+  (dired-filename . "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src"))
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/"
+  (dired-filename . "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp"))
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/"
+  (dired-filename . "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/clomacs.el"))
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/clomacs.el" . 1580)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/"
+  (dired-filename . "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/.gitignore"))
+ ("c:/Users/mogwai/.emacs.d/lib/live-core.el" . 4096)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/config/cider-conf.el" . 1473)
+ ("c:/Users/mogwai/Google Drive/notes.org" . 273638)
+ ("c:/Users/mogwai/.emacs.d/packs/update-live-packs" . 13)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/cider.el" . 5767)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/cider-client.el" . 2092)
+ ("c:/Users/mogwai/.emacs.d/elpa/cider-20160925.2057/cider.el" . 2038)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/spinner/spinner.el" . 2816)
+ ("c:/Users/mogwai/projects/cider/cider.el" . 29264)
+ ("c:/Users/mogwai/.emacs.d/elpa/cider-20160925.2057/cider-client.el" . 1896)
+ ("c:/Users/mogwai/.emacs.d/elpa/cider-20160925.2057/cider-autoloads.el" . 10455)
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider-eval-sexp-fu/cider-eval-sexp-fu.el" . 1233)
+ ("c:/Users/mogwai/projects/synths/"
+  (dired-filename . "c:/Users/mogwai/projects/synths/src"))
+ ("c:/Users/mogwai/projects/synths/src/"
+  (dired-filename . "c:/Users/mogwai/projects/synths/src/synths"))
+ ("c:/Users/mogwai/projects/synths/src/synths/"
+  (dired-filename . "c:/Users/mogwai/projects/synths/src/synths/core.clj"))
+ ("c:/Users/mogwai/.emacs.d/elpa/clojure-mode-20160803.140/clojure-mode-autoloads.el" . 2884)
+ ("c:/Users/mogwai/.emacs.d/elpa/pkg-info-20150517.443/pkg-info-autoloads.el" . 3738)
+ ("c:/Users/mogwai/.emacs.d/elpa/epl-20150517.433/epl-autoloads.el" . 215)
+ ("c:/Users/mogwai/.emacs.d/elpa/queue-0.1.1/queue-autoloads.el" . 334)
+ ("c:/Users/mogwai/.emacs.d/elpa/spinner-1.7.1/spinner-autoloads.el" . 2403)
+ ("c:/Users/mogwai/.emacs.d/elpa/seq-2.16/seq-autoloads.el" . 260)
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/init.el" . 88)
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/lib/paredit.el" . 37183)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/synth.clj" . 7196)
+ ("c:/Users/mogwai/projects/techno/src/"
+  (dired-filename . "c:/Users/mogwai/projects/techno/src/techno"))
+ ("c:/Users/mogwai/projects/techno/src/techno/"
+  (dired-filename . "c:/Users/mogwai/projects/techno/src/techno/sketches"))
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches/"
+  (dired-filename . "c:/Users/mogwai/projects/techno/src/techno/sketches/house2.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/device/midi/nanoKONTROL2.clj" . 12558)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/berlach.clj" . 31)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/demand.clj" . 4372)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/dyn.clj" . 1633)
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches/house2.clj" . 545)
+ ("c:/Users/mogwai/projects/techno/src/techno/ambient.clj" . 70)
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches_live.clj" . 343)
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches/track2.clj" . 2172)
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches/track1.clj" . 3126)
+ ("c:/Users/mogwai/Documents/Apply for a U.S. Visa _ Receipt for Payment.html" . 409)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/node.clj" . 721)
+ ("c:/Users/mogwai/projects/techno/src/techno/bass.clj" . 827)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/server.clj" . 3506)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/algo/chance.clj" . 3992)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/sample.clj" . 3761)
+ ("d:/supercollider/examples/pieces/DreamHouse.scd" . 1813)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/sampler.clj" . 171)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/demand.clj" . 2758)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 15 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 15 - Electro/.."))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 3 - Acoustic"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 3 - Acoustic/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 3 - Acoustic/CyCdh_K3OpHat-01.wav"))
+ ("d:/musicradar-drum-samples/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/midi/basic.clj" . 1593)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_001_firstdef.scd" . 223)
+ ("c:/Users/mogwai/projects/synths/project.clj" . 234)
+ ("c:/Users/mogwai/projects/sccode/Formant.scd" . 10186)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/special_ops.clj" . 4406)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 5 - Electro/" . 1301)
+ ("c:/Users/mogwai/Google Drive/clojure.org" . 7296)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/drum.clj" . 2073)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 4 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 4 - Electro/.."))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 17 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 17 - Electro/CYCdh_ElecK07-ClHat01.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 16 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 16 - Electro/.."))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 04/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 04/CYCdh_Kurz04-ClHat.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 8 - Vinyl/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 8 - Vinyl/CYCdh_VinylK1-ClHat01.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 12 - Vinyl/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 12 - Vinyl/CYCdh_VinylK5-ClHat01.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 13 - Acoustic/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 13 - Acoustic/CYCdh_K4-4OpHat03.wav"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/compositions/auto_dubstep_bass.clj" . 279)
+ ("d:/Tutorial_Piece/Tutorial Piece/tutorialPiece.scd" . 2913)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_009_Tutorial_10_Patterns.scd" . 11334)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 1 - Acoustic close/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 1 - Acoustic close/CYCdh_K1close_Kick-01.wav"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/studio/inst.clj" . 2881)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/studio/mixer.clj" . 2792)
+ ("c:/Users/mogwai/projects/sequencer/README.md" . 66)
+ ("c:/Users/mogwai/projects/sequencer/project.clj" . 197)
+ ("c:/Users/mogwai/projects/sequencer/src/sequencer/sequencer.clj" . 4636)
+ ("c:/Users/mogwai/projects/sequencer/src/sequencer/sequence.clj" . 38)
+ ("c:/Users/mogwai/projects/levycurve/src/levycurve/ui.clj" . 895)
+ ("c:/Users/mogwai/projects/levycurve/project.clj" . 228)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/timing/one_bar_sequencer.clj" . 259)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 10 - Vinyl/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 10 - Vinyl/CYCdh_VinylK3-Kick01.wav"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/libs/counters.clj" . 657)
+ ("c:/Users/mogwai/projects/levycurve/src/levycurve/core.clj" . 102)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/music/rhythm.clj" . 1662)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/music/time.clj" . 445)
+ ("c:/Users/mogwai/projects/overtone-handler/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone-handler/src"))
+ ("c:/Users/mogwai/projects/overtone-handler/src/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone-handler/src/overtone"))
+ ("c:/Users/mogwai/projects/overtone-handler/src/overtone/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone-handler/src/overtone/libs"))
+ ("c:/Users/mogwai/projects/overtone-handler/src/overtone/libs/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone-handler/src/overtone/libs/handlers.clj"))
+ ("c:/Users/mogwai/projects/overtone-handler/src/overtone/libs/handlers.clj" . 7415)
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 06/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 06/CYCdh_Kurz06-ClHat.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 03/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kurzweil Kit 03/CYCdh_Kurz03-ClHat01.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Assorted Hits/Kicks/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Assorted Hits/Kicks/Acoustic"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Assorted Hits/Kicks/Acoustic/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Assorted Hits/Kicks/Acoustic/CYCdh_AcouKick-02.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 14 - Acoustic/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 14 - Acoustic/CYCdh_K5-ClHat01.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 9 - Vinyl/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 9 - Vinyl/CYCdh_VinylK2-ClHat.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 18 - Acoustic/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 18 - Acoustic/CYCdh_K6-ClHat.wav"))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 7 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 7 - Electro/.."))
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 6 - Electro/"
+  (dired-filename . "d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 6 - Electro/CYCdh_ElecK03-ClHat.wav"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/timing/internal_sequencer.clj" . 4431)
+ ("c:/Users/mogwai/projects/overtone/docs/kick.clj" . 2645)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/synth.clj" . 24031)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/buffer.clj" . 13033)
+ ("c:/Users/mogwai/projects/techno/README.md" . 72)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/helpers/audio_file.clj" . 728)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/bus.clj" . 4357)
+ ("c:/Users/mogwai/projects/sccode/diskouttest.aiff" . 22801)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/server/osc_validator.clj" . 11404)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/categories.clj" . 1278)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_007_Tutorial_8_Buffers.scd" . 2141)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/studio/sequencer.clj" . 1478)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/libs/event.clj" . 7546)
+ ("c:/Users/mogwai/projects/radiohead/project.clj" . 322)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/envelope.clj" . 7636)
+ ("c:/Users/mogwai/projects/radiohead/src/radiohead/arpeggi.clj" . 1013)
+ ("c:/Users/mogwai/projects/radiohead/src/radiohead/core.clj" . 6189)
+ ("c:/Users/mogwai/projects/techno/pom.xml" . 346)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/inst/sampled_flute.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/piano.clj" . 718)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/io.clj" . 48)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/core.clj" . 49)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/api.clj" . 2596)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/io.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/fn_gen.clj" . 8327)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/sc_ugen.clj" . 1586)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/buses/getonthebus.clj" . 2298)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/io.clj" . 105)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/synthdef.clj" . 1540)
+ ("d:/supercollider/"
+  (dired-filename . "d:/supercollider/lang"))
+ ("d:/supercollider/lang/"
+  (dired-filename . "d:/supercollider/lang/LangSource"))
+ ("d:/supercollider/lang/LangSource/"
+  (dired-filename . "d:/supercollider/lang/LangSource/ByteCodeArray.h"))
+ ("d:/supercollider/server/scsynth/OSC_Packet.h" . 868)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/server/comms.clj" . 4743)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/server/native.clj" . 500)
+ ("c:/Users/mogwai/projects/overtone/project.clj" . 2758)
+ ("c:/Users/mogwai/projects/osc-clj/src/overtone/osc.clj" . 7201)
+ ("c:/Users/mogwai/projects/osc-clj/src/overtone/osc/"
+  (dired-filename . "c:/Users/mogwai/projects/osc-clj/src/overtone/osc/peer.clj"))
+ ("c:/Users/mogwai/projects/osc-clj/src/overtone/osc/peer.clj" . 1886)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/notation/mad.clj" . 2597)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/feedback.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/compositions/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/examples/compositions/funk.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/compositions/funk.clj" . 2077)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/resonate2013"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/resonate2013/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/resonate2013/ex01_phrasestudy.clj"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/resonate2013/ex01_phrasestudy.clj" . 4016)
+ ("c:/Users/mogwai/projects/overtone/docs/sc-book/sc-one.clj" . 9289)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/protocols.clj" . 2979)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/poll.clj" . 415)
+ ("c:/Users/mogwai/Google Drive/tr.el" . 802)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/cgen_example.clj" . 122)
+ ("c:/Users/mogwai/projects/overtone/script/connect.sh" . 11)
+ ("c:/Users/mogwai/projects/techno/"
+  (dired-filename . "c:/Users/mogwai/projects/techno/resources"))
+ ("c:/Users/mogwai/projects/techno/resources/" . 204)
+ ("c:/Users/mogwai/Google Drive/NationalityVerificationForm.doc" . 2)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/"
+  (dired-filename . "c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_006_ServerArch.scd"))
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_006_ServerArch.scd" . 4105)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/ugens/blowpass4.clj" . 75)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_004_MultiChannel.scd" . 1046)
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/eli_snip_003_EnvArguments.scd" . 3595)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/workshops/resonate2013/ex06_quilstep.clj" . 459)
+ ("c:/Users/mogwai/projects/overtone/src/overtone/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/inst"))
+ ("c:/Users/mogwai/projects/overtone/src/overtone/synth/"
+  (dired-filename . "c:/Users/mogwai/projects/overtone/src/overtone/synth/buffer.clj"))
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/solfege-3.8.3/windowsinstaller.iss" . 165)
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/solfege-3.8.3/winbuild.sh" . 253)
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/solfege-3.8.3/Makefile.in" . 2345)
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/solfege-3.8.3/configure" . 19083)
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/solfege-3.8.3/default.config" . 3549)
+ ("c:/Users/mogwai/projects/sccode/README.md" . 40))

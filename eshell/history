@@ -1,0 +1,16 @@
+cd ~
+ls
+cd Downloads/
+ls
+cd ../projects/
+ls
+cd ~/.emacs.d
+ls
+git clone git://github.com/overtone/emacs-live .
+git clone -f git://github.com/overtone/emacs-live .
+git init
+git remote add origin git://github.com/overtone/emacs-live
+git fetch
+ls
+git checkout -t origin/master
+ls

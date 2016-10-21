@@ -1,0 +1,97 @@
+(ns techno.drums
+  (:use [overtone.core]
+        [overtone.inst.drum]
+        [techno.samples]
+        [techno.recorder]
+        )
+  (:require [techno.sequencer :as sequencer])
+  )
+
+
+(def cymbals (create-sample-map "D:\\musicradar-drum-samples\\musicradar-drum-samples\\Assorted Hits\\Cymbals"))
+(def hi-hats (create-sample-map "D:\\musicradar-drum-samples\\musicradar-drum-samples\\Assorted Hits\\Hi Hats"))
+(def kicks (create-sample-map "D:\\musicradar-drum-samples\\musicradar-drum-samples\\Assorted Hits\\Kicks"))
+(def snares (create-sample-map "D:\\musicradar-drum-samples\\musicradar-drum-samples\\Assorted Hits\\Snares"))
+(def drum-kits (create-sample-map "D:\\musicradar-drum-samples\\musicradar-drum-samples\\Drum Kits" true))
+
+
+
+                                        ;Patterns
+
+(defonce beat (atom {}))
+
+(swap! beat
+       (fn [b]
+         (let [electro (drum-kits :Kit5-Electro)]
+           {
+            1 [(electro :CYCdh_ElecK02-Kick01.wav) [] (electro :CYCdh_ElecK02-FX01.wav) []]
+            2 [(electro :CYCdh_ElecK02-ClHat01.wav) []]
+            3 [(electro :CYCdh_ElecK02-FX03.wav) []]
+            4 [(electro :CYCdh_ElecK02-Snr02.wav) []]
+            })))
+
+
+(ctl beat-player :clock-speed 4)
+(def beat-player (sequencer/get-sequencer 4))
+
+(sequencer/add-pattern beat-player beat)
+
+(sequencer/kill-sequencer beat-player)
+
+(start-recorder (vals (drum-kits :Kit5-Electro)))
+
+;; (def beats (atom {}))
+
+;; (swap! beats (fn [b]
+;;                {:vinyl (gen-pattern 5 (vals (drum-kits :Kit11-Vinyl)))
+;;                 :electro1 (gen-pattern 10 (vals (drum-kits :Kit4-Electro)))
+;;                 :electro2 (gen-pattern 8 (vals (drum-kits :Kit5-Electro)))
+;;                 :electro3 (gen-pattern 8 (vals (drum-kits :Kit6-Electro)))
+;;                 :electro4 (gen-pattern 8 (vals (drum-kits :Kit7-Electro)))}
+;;                ))
+
+
+
+;; (def beat1 (sequencer/get-sequencer 3))
+;; (sequencer/add-pattern beat1 (get @beats :vinyl))
+;; (ctl beat1 :clock-speed 5)
+
+;; (def beat2 (sequencer/get-sequencer 5))
+;; (sequencer/add-pattern beat2 (@beats :electro1))
+;; (sequencer/add-pattern beat2 (@beats :electro2))
+;; (sequencer/remove-pattern beat2 (@beats :electro2))
+
+;; (sequencer/replace-patterns beat2 [(@beats :vinyl) (@beats :electro1)])
+
+
+;; (sequencer/kill-sequencer beat1)
+;; (sequencer/kill-sequencer beat2)
+
+
+;;Functions to generate patterns
+
+
+(defn gen-pattern [size instruments]
+  (let [pattern {}]
+    (reduce
+     (fn [pattern beat]
+       (let [instrument (choose instruments)
+             scale (scale (choose [:Bb4 :C#5]) (choose [:major :minor]))
+             ]
+         (assoc pattern
+                beat
+                (vector
+                 instrument
+                 []
+                 (if (= instrument dance-kick)
+                   [:decay (- 2 (rand 1.5))
+                    ;:freq (midicps (choose scale))
+                    ]
+                   [])
+                 )
+                )))
+     {}
+     (range 1 (inc size))
+     )
+    )
+  )

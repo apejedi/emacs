@@ -1,0 +1,6 @@
+(ns techno.bass
+  (:use [overtone.core])
+  )
+
+(defsynth bass [:freq 200]
+  )

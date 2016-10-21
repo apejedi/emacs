@@ -1,0 +1,37 @@
+(ns techno.motifs
+  (:use [overtone.core]
+        [techno.sequencer :as s])
+  )
+
+(defsynth sweet [note 60 dur 1 amp 1]
+  (let [freq (midicps note)
+        ratios [1 0.5 0.25]
+        freqs (map * ratios (repeat (count ratios) freq))
+        amps (map #(/ 1 %) (range 1 (count ratios)))
+        sig (var-saw freq)
+        attack (* 0.03 dur)
+        sustain (* 0.5 dur)
+        release (* 0.4 dur)
+        env (env-gen (envelope [0 1 0.7 0] [attack sustain release]) :action 2)
+        sig (* sig env amp)]
+    (out:ar 0 sig)
+    (out:ar 1 sig)
+    )
+  )
+
+(comment
+  (def get-motif (atom (fn [_])))
+  (swap! get-motif (fn [_]
+                     (fn [_]
+                       (let [choices [[sweet [(note :Ab5) :amp 0.2]]
+                                      [sweet [(note :G5) :amp 0.2]]
+                                      [sweet [(note :F5) :amp 0.2] sweet [(note :Ab5) :amp 0.2]]
+                                      [sweet [(note :G5) :amp 0.2] sweet [(note :Bb5) :amp 0.2]]
+                                      ]]
+                         (choose choices)
+                         ))))
+  (def note-player (s/gets 2))
+  (ctl (s/get-source note-player) :clock-speed 2)
+  (s/addp note-player get-motif)
+  (s/kill-sequencer note-player)
+  )

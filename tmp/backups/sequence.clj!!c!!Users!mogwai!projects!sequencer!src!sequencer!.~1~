@@ -1,0 +1,63 @@
+(ns techno.sequencer.sequence
+  (:gen-class
+   :name techno.sequencer.sequence
+   :init init
+   :state state
+   :implements [java.lang.Runnable]
+   :methods [[setState [clojure.lang.Keyword Object] void]
+             [getState [clojure.lang.Keyword] Object]]
+   :exposes-methods [run]
+   )
+  )
+
+(declare get-val-if-ref)
+
+(defn -init []
+  [[] (atom {:speed 1 :size 1 :beat 1 :patterns (atom {}) :step 1})]
+  )
+(defn -getState [this key]
+  (get @(.state this) key)
+  )
+(defn -setState [this key val]
+  (swap! (.state this) conj [key val])
+  )
+
+(defn -run []
+  (let [beat (@(.state this) :beat)
+        step (@(.state this) :step)
+        patterns (@(.state this) :patterns)
+        step-beat (fn [beat step]
+                    (let [res (inc (* (dec beat) step))]
+                      (cond (=  (mod res (int res)) 0.0)
+                           (int res)
+                           true res)))
+        stepped-beat (step-beat beat step)]
+    (println "orig " beat " stepped beat " stepped-beat)
+    (doseq [[k p] patterns]
+      (let [val (get-val-if-ref (p :data))
+            wrap (p :wrap)
+            size (cond
+                   (map? val) (apply max (keys val))
+                   (sequential? val) (count val)
+                   true 1)
+            wrap-beat (fn [beat size]
+                        (let [s (+ 1 (/ (- size 1) step))
+                              steps (cycle (range 1 (inc s)))
+                              w (nth steps (dec beat))]
+                          (step-beat w step)
+                          )
+                        )
+            final-beat (if (and wrap (> stepped-beat size))
+                         (wrap-beat beat size)
+                         stepped-beat)]
+        (println "playing " k " with beat " final-beat)
+        ;(play final-beat val)
+        ))
+    )
+  )
+(defn get-val-if-ref [x]
+  (if (instance? clojure.lang.Atom x)
+    @x
+    x
+    )
+  )

@@ -1,0 +1,346 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("c:/Users/mogwai/.emacs.d/packs/stable/power-pack/" . "lib/")
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/" . "elisp/")
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/" . "src/")
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/" . "clomacs/")
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/" . "lib/")
+ ("c:/Users/mogwai/.emacs.d/packs/stable/" . "clojure-pack/")
+ ("c:/Users/mogwai/.emacs.d/elpa/" . "cider-20160925.2057/")
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/submodules/" . "cider/")
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/" . "submodules/")
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/" . "vendor/")
+ ("c:/Users/mogwai/.emacs.d/packs/dev/" . "clojure-pack/")
+ ("c:/Users/mogwai/.emacs.d/packs/" . "stable/")
+ ("c:/Users/mogwai/.emacs.d/" . "packs/")
+ ("c:/Users/mogwai/projects/overtone/src/overtone/device/" . "midi/")
+ ("c:/Users/mogwai/Documents/" . "Apply for a U.S. Visa _ Electronic Funds Transfer (EFT) Payment - India (English)_files/")
+ ("d:/supercollider/examples/" . "pieces/")
+ ("d:/Tutorial_Piece/" . "Tutorial Piece/")
+ ("c:/Users/mogwai/projects/sequencer/target/classes/" . "sequencer/")
+ ("c:/Users/mogwai/projects/sequencer/target/" . "classes/")
+ ("c:/Users/mogwai/projects/sequencer/src/" . "sequencer/")
+ ("c:/Users/mogwai/projects/sequencer/" . "target/")
+ ("c:/Users/mogwai/projects/techno/src/techno/" . "sketches/")
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/" . "Kit 3 - Acoustic/")
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/" . "Drum Kits/")
+ ("d:/musicradar-drum-samples/" . "musicradar-drum-samples/")
+ ("c:/Users/mogwai/.m2/repository/techno/" . "techno/")
+ ("c:/Users/mogwai/.m2/repository/radiohead/radiohead/" . "0.1.0-SNAPSHOT/")
+ ("c:/Users/mogwai/.m2/repository/radiohead/" . "radiohead/")
+ ("c:/Users/mogwai/.m2/repository/" . "techno/")
+ ("c:/Users/mogwai/.m2/" . "repository/")
+ ("c:/Users/mogwai/projects/techno/target/classes/META-INF/maven/techno/" . "techno/")
+ ("c:/Users/mogwai/projects/techno/target/classes/META-INF/maven/" . "techno/")
+ ("c:/Users/mogwai/projects/techno/target/classes/META-INF/" . "maven/")
+ ("c:/Users/mogwai/projects/techno/target/classes/" . "META-INF/")
+ ("c:/Users/mogwai/projects/techno/target/native/linux/" . "x86_64/")
+ ("c:/Users/mogwai/projects/techno/target/native/" . "linux/")
+ ("c:/Users/mogwai/projects/techno/target/" . "classes/")
+ ("c:/Users/mogwai/projects/techno-bak/src/" . "techno/")
+ ("c:/Users/mogwai/projects/techno-bak/" . "src/")
+ ("d:/supercollider/server/supernova/" . "audio_backend/")
+ ("d:/supercollider/server/" . "scsynth/")
+ ("d:/supercollider/" . "examples/")
+ ("d:/" . "musicradar-drum-samples/")
+ ("c:/Users/mogwai/projects/osc-clj/src/overtone/" . "osc/")
+ ("c:/Users/mogwai/projects/osc-clj/src/" . "overtone/")
+ ("c:/Users/mogwai/projects/osc-clj/" . "src/")
+ ("c:/Users/mogwai/projects/overtone-handler/src/overtone/" . "libs/")
+ ("c:/Users/mogwai/projects/overtone-handler/src/" . "overtone/")
+ ("c:/Users/mogwai/projects/overtone-handler/" . "src/")
+ ("c:/Users/mogwai/projects/levycurve/src/" . "levycurve/")
+ ("c:/Users/mogwai/projects/levycurve/" . "src/")
+ ("c:/Users/mogwai/projects/fieldsteel/" . "snippets/")
+ ("c:/Users/mogwai/projects/techno/src/" . "techno/")
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/" . "ugen/")
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/" . "cgens/")
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/" . "synthesis/")
+ ("c:/Users/mogwai/projects/overtone/src/overtone/" . "music/")
+ ("c:/Users/mogwai/projects/overtone/src/" . "overtone/")
+ ("c:/Users/mogwai/projects/overtone/docs/" . "practice/")
+ ("c:/Users/mogwai/projects/overtone/" . "src/")
+ ("c:/Users/mogwai/projects/techno/" . "src/")
+ ("c:/Users/mogwai/projects/radiohead/src/" . "radiohead/")
+ ("c:/Users/mogwai/projects/radiohead/" . "src/")
+ ("c:/Users/mogwai/Downloads/solfege-3.8.3/" . "solfege-3.8.3/")
+ ("c:/Users/mogwai/Downloads/" . "solfege-3.8.3/")
+ ("c:/Users/mogwai/projects/" . "overtone/")
+ ("c:/Users/mogwai/" . "Google Drive/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "c:/Users/mogwai/projects/"
+ "c:/Users/mogwai/Google Drive/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/music/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/"
+ "c:/Users/mogwai/projects/techno/src/techno/"
+ "c:/Users/mogwai/.emacs.d/"
+ "c:/Users/mogwai/"
+ "c:/Users/mogwai/.lein/"
+ "c:/Users/mogwai/projects/techno/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/config/"
+ "c:/Users/mogwai/.emacs.d/lib/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/"
+ "c:/Users/mogwai/.emacs.d/packs/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/"
+ "c:/Users/mogwai/.emacs.d/elpa/cider-20160925.2057/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/spinner/"
+ "c:/Users/mogwai/projects/cider/"
+ "c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider-eval-sexp-fu/"
+ "c:/Users/mogwai/.emacs.d/elpa/clomacs-20160920.42/"
+ "c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/lib/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/inst/"
+ "c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/device/midi/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/"
+ "c:/Users/mogwai/projects/techno/src/techno/sketches/"
+ "c:/Users/mogwai/Documents/"
+ "d:/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/algo/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/sc/"
+ "d:/supercollider/examples/pieces/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/"
+ "c:/Users/mogwai/projects/synths/"
+ "c:/Users/mogwai/projects/sccode/"
+ "c:/Users/mogwai/projects/fieldsteel/snippets/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/examples/midi/"
+ "d:/Tutorial_Piece/Tutorial Piece/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/studio/"
+ "c:/Users/mogwai/projects/techno/src/techno/sequencer/"
+ "c:/Users/mogwai/projects/sequencer/src/sequencer/"
+ "c:/Users/mogwai/projects/sequencer/"
+ "c:/Users/mogwai/projects/levycurve/"
+ "c:/Users/mogwai/projects/sequencer/sequencer/"
+ "c:/Users/mogwai/projects/levycurve/src/levycurve/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/libs/"
+ "c:/Users/mogwai/projects/overtone/src/overtone/examples/timing/"
+ "c:/Users/mogwai/projects/overtone/docs/"
+ "c:/Users/mogwai/projects/overtone/src/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "tekno_mode.el"
+ "log.org"
+ "pitch.clj"
+ "clomacs.el"
+ "synths.clj"
+ "drum_patterns.clj"
+ "motifs.clj"
+ "ctable.el"
+ ".emacs"
+ "core.clj"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("c:/Users/mogwai/projects/" (22537 34323 0 0) "tekno_mode.el" "techno/" "synths/" "spinner/" "sequencer/" "sccode/" "radiohead/" "overtone-handler/" "overtone/" "osc-clj/" "levycurve/" "fieldsteel/" "clomacs/" "cider-nrepl/" "cider/" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/src/techno/" (22535 46971 0 0) "tekno_mode.el" "tb303.scd" "synths.clj" "sketches_live.clj" "sketches.clj" "sketches/" "sequencer2.clj" "sequencer.clj" "samples.clj" "recorder.clj" "motifs.clj" "drum_patterns.clj" "drums.clj" "core.clj" "controller.clj" "bass.clj" "ambient.clj" ".#motifs.clj" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/" (22534 51856 0 0) "tmp/" "smex-items" "screenshots/" "README.md" "packs/" "manifest.el" "LICENSE.txt" "lib/" "installer/" "init.el" "ido.last" "etc/" "eshell/" "elpa/" "ctable.el" "CHANGELOG.md" "auto-save-list/" ".gitmodules" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/" (22532 20907 0 0) "test/" "target/" "src/" "resources/" "README.md" "project.clj" "pom.xml" "musicradar-drum-samples/" "log.txt" "LICENSE" "doc/" "dev-resources/" "CHANGELOG.md" ".nrepl-port" ".lein-repl-history" ".hgignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/" (22532 18400 0 0) "Videos/" "Templates/" "Start Menu/" "SendTo/" "Searches/" "Saved Games/" "Roaming/" "Recent/" "projects/" "PrintHood/" "Pictures/" "PicStream/" "OneDrive/" "ntuser.ini" "NTUSER.DAT{7cb7d048-89cf-11e6-b848-99023e2ba0b8}.TMContainer00000000000000000002.regtrans-ms" "NTUSER.DAT{7cb7d048-89cf-11e6-b848-99023e2ba0b8}.TMContainer00000000000000000001.regtrans-ms" "NTUSER.DAT{7cb7d048-89cf-11e6-b848-99023e2ba0b8}.TM.blf" "NTUSER.DAT{7cb7d047-89cf-11e6-b848-99023e2ba0b8}.TxR.blf" "NTUSER.DAT{7cb7d047-89cf-11e6-b848-99023e2ba0b8}.TxR.2.regtrans-ms" "NTUSER.DAT{7cb7d047-89cf-11e6-b848-99023e2ba0b8}.TxR.1.regtrans-ms" "NTUSER.DAT{7cb7d047-89cf-11e6-b848-99023e2ba0b8}.TxR.0.regtrans-ms" "ntuser.dat.LOG2" "ntuser.dat.LOG1" "NTUSER.DAT" "NetHood/" "My Documents/" "Music/" "Local Settings/" "lmms/" "Links/" "IntelGraphicsProfiles/" "Google Drive/" "Favorites/" "Downloads/" "Documents/" "Desktop/" "Cookies/" "Contacts/" "cider-dev" "cider/" "Application Data/" "AppData/" ".sonic-pi/" ".solfegerc" ".solfege/" ".overtone/" ".oracle_jre_usage/" ".m2/" ".lmmsrc.xml" ".lein/" ".gnupg/" ".gitconfig" ".emacs~" ".emacs.d/" ".emacs" "../" "./")
+
+ ("c:/Users/mogwai/.lein/" (22532 13450 0 0) "self-installs/" "repl-port" "repl-history" "profiles.clj5852506648463917238.bak" "profiles.clj" "bin/" "../" "./")
+
+ ("c:/Users/mogwai/Google Drive/" (22530 20858 0 0) "[Tom_G._Stevens_PhD]_You_Can_Choose_To_Be_Happy_(BookZZ.org).pdf" "[Bhante_Henepola_Gunaratana]_Mindfulness_in_Plain_(BookZZ.org).pdf" "USACI2161913.pdf" "UILab5.zip" "UILab4.rar" "UILab3.zip" "tr.el" "todo.org" "Syllabus.docx.gdoc" "sound.pdf" "slowly_data/" "slowly.aup" "SKYWAY_Umraiya_15212914.pdf" "Skyline Shuttle - Minneapolis Airport Shuttle Bus to Duluth.gdoc" "Sketch.touchosc" "sicp.org" "Separation.pdf" "S G Ganesh, Tushar Sharma auth. Oracle Certified Professional Java SE 7 Programmer Exams 1Z0-804 and 1Z0-805 A Comprehensive OCPJP 7 Certification Guide  2013.pdf" "Russell,Norvig - AI - Artificial Intelligence A Modern Approach - 2nd Edition.pdf" "Robert Sedgewick Algorithms in Java, Parts 1-4  Part 1-4 2002.chm" "Robert Sedgewick Algorithms in Java, Part 5 Graph Algorithms  Part 5 2003.chm" "ResumeKosuri%2c Ravi- 07-2013.docx" "Resume.pdf" "Resume.docx" "Resume.doc.gdoc" "Resume.doc" "Resume new.gdoc" "references.doc" "Progressive VOE - Samp 2.doc" "practice/" "Picture 004.jpg" "passport2.pdf" "Passport Check List.gdoc" "Oreilly.Java.The.Good.Parts.May.2010.pdf" "Oracle Certified Associate Java SE 7 Programmer Study Guide 2012.pdf" "notes.org" "NationalityVerificationForm.doc" "musicradar-drum-samples.zip" "Martin Russ Sound Synthesis and Sampling, Third Edition   2009.pdf" "Marcus Aurelius Emperor of Rome, Martin Hammond, Diskin Clay Meditations    2006.pdf" "Logs.zip" "log.org" "lab2.rar" "Lab 1.zip" "JUmraiya_Separation_Agreement.pdf" "James Beauchamp Analysis, Synthesis, and Perception of Musical Sounds The Sound of Music  2007.pdf" "Jaideep_Resume_10172014.docx" "Jaideep_Resume_10172014 (1).docx" "Jaideep_Letter.pdf" "Jaideep Resume.doc.gdoc" "internet exercise p15.gdoc" "i94(3).pdf" "htman_book_and_patches/" "h2_final.gdoc" "H1Docs/" "h1.pdf" "Experian1.pdf" "doc20150216121103.pdf" "discipline.md" "desktop.ini" "CottleSC3.pdf" "clojure.org" "chimp_paradox.epub" "Bruce.Eckel.Thinking.In.Java.4th.Edition.Dec.2007.eBook-BBL.pdf" "Brian Goetz, Tim Peierls, Joshua Bloch, Joseph Bowbeer, David Holmes, Doug Lea-Java Concurrency in Practice-Addison-Wesley Professional (2006).pdf" "BLSUSPassportChecklist.pdf" "algorithms_in_java2.pdf" "algorithms_in_java.pdf" "AI_HW1.gdoc" "addison.rar" "14MN03049334147000304930.pdf" "14MN02998257585000299820.pdf" "145781003701 BLS Passport Order Form.html" ".tmp.drivedownload/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/" (22530 52549 0 0) "test/" "src/" "README.md" "project.clj" "clomacs.el" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/" (22514 62598 0 0) "Public/" "mogwai/" "desktop.ini" "Default.migrated/" "Default User/" "Default/" "All Users/" "../" "./")
+
+ ("c:/Users/mogwai/Documents/" (22527 45287 0 0) "Witcher 2/" "WB Games/" "visa.pdf" "Syntorial/" "Sketch.touchosc" "Notice.rtf" "Nonimmigrant Visa - Confirmation Page_files/" "Nonimmigrant Visa - Confirmation Page.html" "My Videos/" "My Pictures/" "My Music/" "My Games/" "My Cheat Tables/" "issue.txt" "IMG_0610.JPG" "IMG_0609.JPG" "IMG_0608.JPG" "IMG_0607.JPG" "IMG_0606.MOV" "IMG_0605.JPG" "Ginger hotels - Paymentresponse Invoice_files/" "Ginger hotels - Paymentresponse Invoice.html" "desktop.ini" "CPY_SAVES/" "Booking Confirmation_files/" "Booking Confirmation.html" "appointmentconfirmation_files/" "appointmentconfirmation.html" "Apply for a U.S. Visa _ Receipt for Payment_files/" "Apply for a U.S. Visa _ Receipt for Payment.html" "Apply for a U.S. Visa _ Electronic Funds Transfer (EFT) Payment - India (English)_files/" "Apply for a U.S. Visa _ Electronic Funds Transfer (EFT) Payment - India (English).html" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/config/" (22507 26813 0 0) "paredit-conf.el" "overtone-conf.el" "mic-paren-conf.el" "highlight-flash-conf.el" "clojure-conf.el" "cider-conf.el" "auto-complete-conf.el" "../" "./")
+
+ ("c:/Users/mogwai/Downloads/" (22527 898 0 0) "winrar-x64-531b1.exe" "wilsondescrivanch3.pdf" "vmpk-0.6.2-win32-setup.exe" "vlc-2.2.1-win32.exe" "visualvm_138.zip" "visualvm_138/" "TouchPad_Synaptics_19.0.7.34_W10x64_A.zip" "TouchPad_Synaptics_19.0.7.34_W10x64_A/" "SuperCollider-3.6.6-win32.exe" "SumatraPDF-3.1.1-install.exe" "stopwatch/" "SteamSetup.exe" "solfege-win32-3.8.2.exe" "solfege-3.8.3.tar.gz" "solfege-3.8.3/" "setup-x86_64.exe" "receipt.html" "Radiohead-in-rainbows-Sheet-Partition.pdf" "Radiohead - OK Computer.pdf" "Radiohead - Kid A.pdf" "qbittorrent_3.3.3_setup.exe" "python-3.4.4.amd64.msi" "Progressive VOE - Samp 2.doc" "mingw-get-setup.exe" "MIDIPLUS SmartPAD Manual_140929A.pdf" "Matt Frazier, Matthew Ruscigno, Brendan Brazier-No Meat Athlete_ Run on Plants and Discover Your Fittest, Fastest, Happiest Self-Fair Winds Press (2013).pdf" "lmms-1.1.3-win64.exe" "leiningen-installer-1.0.exe" "Lame_v3.99.3_for_Windows.exe" "jdk-8u71-windows-x64.exe" "googledrivesync.exe" "Git-2.7.0-64-bit.exe" "emacs-24.5-bin-i686-mingw32.zip" "emacs/" "desktop.ini" "Coleman, Ella-Keto Living Cookbook 2_ Lose Weight with 101 Yummy & Low Carb Ketogenic Savory and Sweet Snacks (2014).epub" "cmake-3.4.3-win32-x86.exe" "ChromeSetup.exe" "Carol Fenster-100 Best Gluten-Free Recipes-Houghton Mifflin Harcourt.epub" "audacity-win-2.1.2.exe" "Amnesiac.pdf" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/power-pack/lib/" (22177 33602 0 0) "yasnippet/" "wc-mode/" "volatile-highlights/" "undo-tree/" "scratch/" "refheap/" "quick-jump.el" "pcache/" "mwe-log-commands.el" "multiple-cursors/" "logito/" "lively.el" "iy-go-to-char.el" "highlight-tail.el" "gist/" "gh/" "floobits/" "expand-region/" "emacs-git-gutter/" "browse-kill-ring/" "ace-jump-mode/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/power-pack/" (22177 33602 0 0) "lib/" "init.el" "info.el" "config/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/lib/" (22507 25318 0 0) "uuid" "spinner.el" "rainbow-delimiters" "popup-el" "paredit.el" "mic-paren.el" "jump.el" "inflections.el" "hydra" "highlight.el" "fuzzy-el" "eval-sexp-fu" "edn" "clojure-mode" "clj-refactor" "cider-eval-sexp-fu" "cider" "auto-complete" "align-cljlet" "ac-cider" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider-eval-sexp-fu/" (22507 25318 0 0) "README.md" "LICENSE" "cider-eval-sexp-fu.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/cider/" (22507 25319 0 0) "Vagrantfile" "vagrant/" "test/" "README.md" "nrepl-dict.el" "nrepl-client.el" "mkdocs.yml" "Makefile" "logo/" "doc/" "cider.el" "cider-util.el" "cider-test.el" "cider-stacktrace.el" "cider-selector.el" "cider-scratch.el" "cider-resolve.el" "cider-repl.el" "cider-popup.el" "cider-overlays.el" "cider-mode.el" "cider-macroexpansion.el" "cider-interaction.el" "cider-inspector.el" "cider-grimoire.el" "cider-eldoc.el" "cider-doc.el" "cider-debug.el" "cider-compat.el" "cider-common.el" "cider-client.el" "cider-classpath.el" "cider-browse-ns.el" "cider-apropos.el" "CHANGELOG.md" "Cask" ".travis.yml" ".projectile" ".gitignore" ".github/" ".git/" ".dir-locals.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/" (22507 25319 0 0) "uuid/" "spinner.el/" "spinner/" "rainbow-delimiters/" "popup-el/" "paredit.el" "mic-paren.el" "inflections.el" "highlight.el" "fuzzy-el/" "eval-sexp-fu/" "edn/" "clomacs/" "clojure-mode/" "clj-refactor/" "cider-eval-sexp-fu/" "cider/" "auto-complete/" "align-cljlet/" "ac-cider/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/" (22507 25318 0 0) "README.md" "lib/" "init.el" "info.el" "config/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/" (22504 62303 0 0) "clomacs.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/" (22504 62303 0 0) "elisp/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/elpa/spinner-1.7.1/" (22504 45936 0 0) "spinner.elc" "spinner.el" "spinner-pkg.elc" "spinner-pkg.el" "spinner-autoloads.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/clojure-pack/lib/spinner/" (22504 62658 0 0) "spinner.el" "some-spinners.gif" "README.org" "all-spinners.gif" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/elpa/" (22505 2353 0 0) "spinner-1.7.1.signed" "spinner-1.7.1/" "seq-2.16.signed" "seq-2.16/" "queue-0.1.1.signed" "queue-0.1.1/" "pkg-info-20150517.443/" "gnupg/" "epl-20150517.433/" "clojure-mode-20160803.140/" "cider-20160925.2057/" "archives/" "../" "./")
+
+ ("c:/Users/mogwai/projects/cider/" (22504 45182 0 0) "Vagrantfile" "vagrant/" "test/" "README.md" "nrepl-dict.el" "nrepl-client.el" "mkdocs.yml" "Makefile" "logo/" "doc/" "cider.el" "cider-util.el" "cider-test.el" "cider-stacktrace.el" "cider-selector.el" "cider-scratch.el" "cider-resolve.el" "cider-repl.el" "cider-popup.el" "cider-overlays.el" "cider-mode.el" "cider-macroexpansion.el" "cider-interaction.el" "cider-inspector.el" "cider-grimoire.el" "cider-eldoc.el" "cider-doc.el" "cider-debug.el" "cider-compat.el" "cider-common.el" "cider-client.el" "cider-classpath.el" "cider-browse-ns.el" "cider-apropos.el" "CHANGELOG.md" "Cask" ".travis.yml" ".projectile" ".gitignore" ".github/" ".git/" ".dir-locals.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/elpa/cider-20160925.2057/" (22504 59163 0 0) "nrepl-dict.elc" "nrepl-dict.el" "nrepl-client.elc" "nrepl-client.el" "cider.elc" "cider.el" "cider-util.elc" "cider-util.el" "cider-test.elc" "cider-test.el" "cider-stacktrace.elc" "cider-stacktrace.el" "cider-selector.elc" "cider-selector.el" "cider-scratch.elc" "cider-scratch.el" "cider-resolve.elc" "cider-resolve.el" "cider-repl.elc" "cider-repl.el" "cider-popup.elc" "cider-popup.el" "cider-pkg.el" "cider-overlays.elc" "cider-overlays.el" "cider-mode.elc" "cider-mode.el" "cider-macroexpansion.elc" "cider-macroexpansion.el" "cider-interaction.elc" "cider-interaction.el" "cider-inspector.elc" "cider-inspector.el" "cider-grimoire.elc" "cider-grimoire.el" "cider-eldoc.elc" "cider-eldoc.el" "cider-doc.elc" "cider-doc.el" "cider-debug.el" "cider-compat.elc" "cider-compat.el" "cider-common.elc" "cider-common.el" "cider-client.elc" "cider-client.el" "cider-classpath.elc" "cider-classpath.el" "cider-browse-ns.elc" "cider-browse-ns.el" "cider-autoloads.el" "cider-apropos.elc" "cider-apropos.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/elpa/cider-20160914.2335/" (22504 45952 0 0) "nrepl-dict.elc" "nrepl-dict.el" "nrepl-client.elc" "nrepl-client.el" "cider.elc" "cider.el" "cider-util.elc" "cider-util.el" "cider-test.elc" "cider-test.el" "cider-stacktrace.elc" "cider-stacktrace.el" "cider-selector.elc" "cider-selector.el" "cider-scratch.elc" "cider-scratch.el" "cider-resolve.elc" "cider-resolve.el" "cider-repl.elc" "cider-repl.el" "cider-popup.elc" "cider-popup.el" "cider-pkg.el" "cider-overlays.elc" "cider-overlays.el" "cider-mode.elc" "cider-mode.el" "cider-macroexpansion.elc" "cider-macroexpansion.el" "cider-interaction.elc" "cider-interaction.el" "cider-inspector.elc" "cider-inspector.el" "cider-grimoire.elc" "cider-grimoire.el" "cider-eldoc.elc" "cider-eldoc.el" "cider-doc.elc" "cider-doc.el" "cider-debug.elc" "cider-debug.el" "cider-compat.elc" "cider-compat.el" "cider-common.elc" "cider-common.el" "cider-client.elc" "cider-client.el" "cider-classpath.elc" "cider-classpath.el" "cider-browse-ns.elc" "cider-browse-ns.el" "cider-autoloads.el" "cider-apropos.elc" "cider-apropos.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/stable/" (22177 33601 0 0) "power-pack/" "org-pack/" "lang-pack/" "git-pack/" "foundation-pack/" "colour-pack/" "clojure-pack/" "bindings-pack/" "../" "./")
+
+ ("c:/Users/mogwai/projects/fieldsteel/snippets/" (22263 23576 0 0) "kick_001.scd" "eli_snip_011_Tutorial_12_WiiMote.scd" "eli_snip_010_Tutorial_11_OSC.scd" "eli_snip_009_Tutorial_10_Patterns.scd" "eli_snip_008_Tutorial_9_MIDI.scd" "eli_snip_007_Tutorial_8_Buffers.scd" "eli_snip_006_ServerArch.scd" "eli_snip_005_iterations.scd" "eli_snip_004_MultiChannel.scd" "eli_snip_003_EnvArguments.scd" "eli_snip_002_lineAttacDecay.scd" "eli_snip_001_firstdef.scd" "asio4all.scd" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/elpa/clomacs-20160920.42/" (22504 50188 0 0) "clomacs.elc" "clomacs.el" "clomacs-pkg.elc" "clomacs-pkg.el" "clomacs-autoloads.el~" "clomacs-autoloads.el" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/libs/" (22268 29730 0 0) "event.clj" "deps.clj" "counters.clj" "boot_msg.clj" "binary_file_io.clj" "asset.clj" "asset/" "app_icon.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/levycurve/src/levycurve/" (22263 10125 0 0) "ui.clj" "core.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/levycurve/" (22263 10125 0 0) "test/" "src/" "README.md" "project.clj" "LICENSE" "levycurve.java" "doc/" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/synthesis/" (22262 55057 0 0) "samples.clj" "poll.clj" "local_buffer.clj" "fx.clj" "fourier.clj" "fm.clj" "filters.clj" "feedback.clj" "demand.clj" "deci_wobble.clj" "cgen_example.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/cgens/" (22494 59598 0 0) "tap.clj" "oscillators.clj" "mix.clj" "line.clj" "io.clj" "info.clj" "fx.clj" "freq.clj" "env.clj" "dyn.clj" "demand.clj" "buf_io.clj" "bhob.clj" "berlach.clj" "beq_suite.clj" "audio_in.clj" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/submodules/cider/" (22177 33599 0 0) "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/submodules/ac-cider/" (22177 33599 0 0) "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/submodules/" (22177 33599 0 0) "spinner.el/" "rainbow-delimiters/" "popup-el/" "fuzzy-el/" "eval-sexp-fu/" "edn/" "clojure-mode/" "clj-refactor/" "cider-eval-sexp-fu/" "cider/" "auto-complete/" "align-cljlet/" "ac-cider/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/vendor/" (22177 33599 0 0) "submodules/" "checkouts/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/lib/" (22177 33599 0 0) "live-core.el" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/clojure-pack/" (22177 33599 0 0) "vendor/" "README.md" "lib/" "init.el" "info.el" "config/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/dev/" (22177 33599 0 0) "power-pack/" "org-pack/" "lang-pack/" "git-pack/" "foundation-pack/" "colour-pack/" "clojure-pack/" "bindings-pack/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/packs/" (22177 33602 0 0) "update-live-packs" "template/" "stable/" "dev/" "../" "./")
+
+ ("c:/Users/mogwai/.emacs.d/eshell/" (22177 33607 0 0) "lastdir" "history" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/device/midi/" (22179 53413 0 0) "nanoKONTROL2.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/device/" (22179 53413 0 0) "midi/" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/src/techno/sketches/" (22486 44623 0 0) "track2.clj" "track1.clj" "house2.clj" "../" "./")
+
+ ("c:/Users/mogwai/Documents/Apply for a U.S. Visa _ Electronic Funds Transfer (EFT) Payment - India (English)_files/" (22485 44715 0 0) "screen.css" "print.css" "main.css" "jquery.js" "jquery-ui-1.8.4.custom.min.js" "jquery-1.4.2.min.js" "ga.js" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/notation/" (22179 53413 0 0) "mad2.clj" "mad.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/buses/" (22179 53413 0 0) "getonthebus.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/src/" (22481 33192 0 0) "techno/" ".emacs" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/studio/" (22476 13725 0 0) "wavetable.clj" "util.clj" "transport.clj" "sequencer.clj" "scope.clj" "mixer.clj" "midi_player.clj" "midi.clj" "inst.clj" "fx.clj" "eq.clj" "core.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/sccode/" (22474 23597 0 0) "temperament.scd" "tb303_2.scd" "tb303.scd" "Sines.scd" "Reverb.scd" "README.md" "Midi.scd" "jonatan.scd" "Formant.scd" "filters.scd" "FilterBank.scd" "diskouttest.aiff" "ControlTest.scd" "Chimes.scd" "ChicagoPad2.scd" "ChicagoPad.scd" "BufTest.scd" "Bass.scd" "Alert.scd" "additive.scd" "acid.scd" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/ugen/" (22179 53413 0 0) "specs.clj" "special_ops.clj" "sc_ugen.clj" "metadata/" "intern_ns.clj" "fn_gen.clj" "doc.clj" "defaults.clj" "common.clj" "check.clj" "categories.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/music/" (22461 8777 0 0) "tuning.clj" "time.clj" "rhythm.clj" "pitch.clj" "drums.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/" (22475 12364 0 0) "vbap.clj" "util.clj" "ugens.clj" "trig.clj" "synth.clj" "server.clj" "sample.clj" "protocols.clj" "node.clj" "machinery/" "info.clj" "foundation_groups.clj" "examples/" "example.clj" "envelope.clj" "dyn_vars.clj" "defcgen.clj" "defaults.clj" "clock.clj" "cgens/" "bus.clj" "buffer.clj" "bindings.clj" "../" "./")
+
+ ("c:/Users/mogwai/Downloads/emacs/bin/" (22480 65183 0 0) "runemacs.exe" "libXpm.dll" "grep-changelog" "etags.exe" "emacs_backtrace.txt" "emacsclientw.exe" "emacsclient.exe" "emacs.exe" "emacs-24.5.exe" "ebrowse.exe" "ctags.exe" "addpm.exe" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/musicradar-drum-samples/" (22461 41292 0 0) "Rex Loops/" "Drum Kits/" "Assorted Hits/" "../" "./")
+
+ ("d:/supercollider/server/scsynth/" (22414 10347 0 0) "SC_World.cpp" "SC_WireSpec.h" "SC_UnitSpec.h" "SC_UnitDef.h" "SC_UnitDef.cpp" "SC_Unit.cpp" "SC_TimeDLL.hpp" "SC_Time.hpp" "SC_SynthDef.h" "SC_Str4.h" "SC_Str4.cpp" "SC_SequencedCommand.h" "SC_SequencedCommand.cpp" "SC_Rate.cpp" "SC_Prototypes.h" "SC_PortAudio.cpp" "SC_Node.cpp" "SC_MiscCmds.cpp" "SC_Lib_Cintf.h" "SC_Lib_Cintf.cpp" "SC_Lib.h" "SC_Lib.cpp" "SC_Jack.cpp" "SC_HiddenWorld.h" "SC_Group.h" "SC_Group.cpp" "SC_GraphDef.h" "SC_GraphDef.cpp" "SC_Graph.cpp" "SC_CoreAudio.h" "SC_CoreAudio.cpp" "SC_ComPort.cpp" "SC_BufGen.cpp" "SC_Audio_Android.cpp" "SC_AU.h" "SC_AU.cpp" "scsynth_main.cpp" "Rendezvous.h" "Rendezvous.cpp" "ReadWriteMacros.h" "PriorityQueue.h" "OSC_Packet.h" "iPhone/" "HashTable.h" "CMakeLists.txt" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/" (22179 53413 0 0) "ugen/" "synthdef.clj" "server/" "defexample.clj" "allocator.clj" "../" "./")
+
+ ("d:/supercollider/examples/pieces/" (22414 10346 0 0) "Trains.scd" "Termite_College.scd" "spacelab.scd" "some_constellations.scd" "RM-octaver.scd" "Record Scratcher.scd" "Poeme Symphonique.scd" "microhelix_study.scd" "Little_Man_From_Another_Place.scd" "hommage_a_duerer.scd" "DrummerSynthDef.scd" "DreamHouse.scd" "deap_sea.scd" "autohausen.scd" "atheoryofharmony.scd" "aftergoeyvaerts.scd" "acid_otophilia.scd" "../" "./")
+
+ ("d:/supercollider/examples/" (22278 45068 0 0) "research_and_tools/" "pieces/" "other/" "GUI examples/" "demonstrations/" "between_languages/" "../" "./")
+
+ ("d:/supercollider/" (22414 10346 0 0) "travis_test_run_proto.json" "testsuite/" "sounds/" "server/" "SCVersion.txt" "SCDoc/" "SCClassLibrary/" "README_WINDOWS.md" "README_OS_X.md" "README_LINUX.md" "README_JAILBROKEN_IPHONE.md" "README_IPHONE.md" "README.md" "QtCollider/" "platform/" "package/" "lang/" "INSTALL" "include/" "icons/" "HelpSource/" "external_libraries/" "examples/" "editors/" "COPYING" "common/" "cmake_modules/" "CMakeLists.txt" "CHANGELOG.md" "ChangeLog" "build_sclang.cfg.in" "AUTHORS" ".travis.yml" ".gitmodules" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/" (22179 53413 0 0) "workshops/" "ugens/" "timing/" "synthesis/" "notation/" "monome/" "midi/" "instruments/" "getting_started/" "compositions/" "buses/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/inst/" (22362 3673 0 0) "synth.clj" "sampler.clj" "sampled_piano.clj" "sampled_flute.clj" "piano.clj" "io.clj" "drum.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/synths/" (22359 34223 0 0) "test/" "src/" "resources/" "README.md" "project.clj" "LICENSE" "doc/" "CHANGELOG.md" ".hgignore" ".gitignore" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/" (22179 53413 0 0) "overtone/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/midi/" (22355 18602 0 0) "keyboard.clj" "basic.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/docs/practice/" (22179 53412 0 0) "sc140_sourcecode.txt" "exercises" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/docs/" (22179 53412 0 0) "ugens.md" "ugen-metadata.md" "sc-ugens.pdf" "sc-book/" "roadmap.md" "practice/" "metadata.md" "kick.clj" "events.md" "data-model.md" "config.clj" "cheatsheet/" "../" "./")
+
+ ("d:/Tutorial_Piece/Tutorial Piece/" (22340 50896 0 0) "tutorialPiece.scd" "buffers/" ".DS_Store" "../" "./")
+
+ ("d:/Tutorial_Piece/" (22343 57424 0 0) "__MACOSX/" "Tutorial Piece/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/" (22340 26663 0 0) "version.clj" "synth/" "studio/" "speech.clj" "sc/" "samples/" "repl/" "protocols.clj" "music/" "live.clj" "libs/" "jna_path.clj" "inst/" "helpers/" "examples/" "device/" "core.clj" "config/" "api.clj" "algo/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/" (22340 26663 0 0) "TODO.md" "test/" "target/" "src/" "script/" "resources/" "README.md" "radiohead/" "project.clj" "native/" "LICENSE" "docs/" "dev-resources/" "CHANGELOG.md" ".nrepl-port" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/sc/machinery/server/" (22318 14291 0 0) "osc_validator.clj" "native.clj" "connection.clj" "comms.clj" "args.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/src/sequencer/" (22312 13749 0 0) "sequencer.clj" "sequence.clj" "../" "./")
+
+ ("c:/Users/mogwai/Downloads/emacs/" (22176 31093 0 0) "var/" "share/" "libexec/" "bin/" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/src/techno/sequencer/" (22312 5437 0 0) "sequencer2.clj" "sequence.clj" "player.clj" "at_at.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/" (22311 58758 0 0) "test/" "target/" "src/" "resources/" "README.md" "project.clj" "LICENSE" "doc/" "CHANGELOG.md" ".nrepl-port" ".hgignore" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/target/classes/sequencer/" (22311 58326 0 0) "sequence__init.class" "sequence.class" "sequence$_setState.class" "sequence$_run.class" "sequence$_run$wrap_beat__53.class" "sequence$_run$wrap_beat__50.class" "sequence$_run$step_beat__43.class" "sequence$_init.class" "sequence$_getState.class" "sequence$loading__5569__auto____36.class" "sequence$get_val_if_ref.class" "sequence$fn__38.class" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/target/classes/" (22311 58144 0 0) "sequencer/" "META-INF/" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/target/" (22311 58339 0 0) "stale/" "repl-port" "classes/" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/test/" (22311 57726 0 0) "sequencer/" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/src/" (22311 57726 0 0) "sequencer/" "../" "./")
+
+ ("c:/Users/mogwai/projects/sequencer/sequencer/" (22311 57690 0 0) "test/" "src/" "resources/" "README.md" "project.clj" "LICENSE" "doc/" "CHANGELOG.md" ".hgignore" ".gitignore" "../" "./")
+
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 8 - Vinyl/" (19225 19108 0 0) "CYCdh_VinylK1-Tamb.wav" "CYCdh_VinylK1-Snr02.wav" "CYCdh_VinylK1-Snr01.wav" "CYCdh_VinylK1-Shkr03.wav" "CYCdh_VinylK1-Shkr02.wav" "CYCdh_VinylK1-Shkr01.wav" "CYCdh_VinylK1-OpHat.wav" "CYCdh_VinylK1-Kick03.wav" "CYCdh_VinylK1-Kick02.wav" "CYCdh_VinylK1-Kick01.wav" "CYCdh_VinylK1-ClHat02.wav" "CYCdh_VinylK1-ClHat01.wav" "../" "./")
+
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/Kit 3 - Acoustic/" (19225 19112 0 0) "CyCdh_K3Tom-05.wav" "CyCdh_K3Tom-04.wav" "CyCdh_K3Tom-01.wav" "CyCdh_K3Snr-10.wav" "CyCdh_K3Snr-09.wav" "CyCdh_K3Snr-08.wav" "CyCdh_K3Snr-07.wav" "CyCdh_K3Snr-06.wav" "CyCdh_K3Snr-05.wav" "CyCdh_K3Snr-04.wav" "CyCdh_K3Snr-03.wav" "CyCdh_K3Snr-02.wav" "CyCdh_K3Snr-01.wav" "CyCdh_K3SdSt-07.wav" "CyCdh_K3SdSt-06.wav" "CyCdh_K3SdSt-05.wav" "CyCdh_K3SdSt-04.wav" "CyCdh_K3SdSt-03.wav" "CyCdh_K3SdSt-02.wav" "CyCdh_K3SdSt-01.wav" "CyCdh_K3Rim-01.wav" "CyCdh_K3OpHat-03.wav" "CyCdh_K3OpHat-02.wav" "CyCdh_K3OpHat-01.wav" "CyCdh_K3Kick-03.wav" "CyCdh_K3Kick-02.wav" "CyCdh_K3Kick-01.wav" "CyCdh_K3HfHat.wav" "CyCdh_K3Crash-07.wav" "CyCdh_K3Crash-06.wav" "CyCdh_K3Crash-05.wav" "CyCdh_K3Crash-04.wav" "CyCdh_K3Crash-03.wav" "CyCdh_K3Crash-02.wav" "CyCdh_K3Crash-01.wav" "CyCdh_K3ClHat-04.wav" "CyCdh_K3ClHat-03.wav" "CyCdh_K3ClHat-02.wav" "CyCdh_K3ClHat-01.wav" "../" "./")
+
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/Drum Kits/" (19225 19186 0 0) "Kurzweil Kit 08/" "Kurzweil Kit 07/" "Kurzweil Kit 06/" "Kurzweil Kit 05/" "Kurzweil Kit 04/" "Kurzweil Kit 03/" "Kurzweil Kit 02/" "Kurzweil Kit 01/" "Kit 9 - Vinyl/" "Kit 8 - Vinyl/" "Kit 7 - Electro/" "Kit 6 - Electro/" "Kit 5 - Electro/" "Kit 4 - Electro/" "Kit 3 - Acoustic/" "Kit 2 - Acoustic room/" "Kit 18 - Acoustic/" "Kit 17 - Electro/" "Kit 16 - Electro/" "Kit 15 - Electro/" "Kit 14 - Acoustic/" "Kit 13 - Acoustic/" "Kit 12 - Vinyl/" "Kit 11 - Vinyl/" "Kit 10 - Vinyl/" "Kit 1 - Acoustic close/" "../" "./")
+
+ ("d:/musicradar-drum-samples/musicradar-drum-samples/" (22260 30014 0 0) "Rex Loops/" "Drum Kits/" "Assorted Hits/" "../" "./")
+
+ ("d:/musicradar-drum-samples/" (22260 30007 0 0) "musicradar-drum-samples/" "../" "./")
+
+ ("c:/Users/mogwai/projects/techno/target/classes/META-INF/maven/techno/techno/" (22299 55481 0 0) "pom.properties" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/examples/timing/" (22290 27981 0 0) "one_bar_sequencer.clj" "internal_sequencer.clj" "internal_metro.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/algo/" (22179 53413 0 0) "trig.clj" "scaling.clj" "lists.clj" "fn.clj" "chance.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/repl/" (22179 53413 0 0) "ugens.clj" "shell.clj" "inst.clj" "graphviz.clj" "examples.clj" "debug.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/overtone/src/overtone/helpers/" (22286 59191 0 0) "zip.clj" "system.clj" "synth.clj" "string.clj" "stereo.clj" "seq.clj" "sc_lang.clj" "ref.clj" "old_contrib.clj" "ns.clj" "math.clj" "map.clj" "lib.clj" "hash.clj" "file.clj" "doc.clj" "audio_file.clj" "../" "./")
+
+ ("c:/Users/mogwai/projects/radiohead/src/radiohead/" (22281 21934 0 0) "core.clj" "arpeggi.clj" "../" "./")
+
+ ("c:/Users/mogwai/.m2/repository/techno/techno/" (22281 16565 0 0) "maven-metadata-local.xml" "0.1.0-SNAPSHOT/" "0.1.0/" "0.1/" "../" "./")
+
+ ("c:/Users/mogwai/.m2/repository/techno/" (22245 42339 0 0) "techno/" "../" "./")
+
+ ("c:/Users/mogwai/projects/radiohead/" (22281 16592 0 0) "test/" "target/" "src/" "resources/" "README.md" "project.clj" "pom.xml" "LICENSE" "doc/" "dev-resources/" ".nrepl-port" ".lein-repl-history" ".gitignore" ".git/" "../" "./")
+
+ ("c:/Users/mogwai/.m2/repository/radiohead/radiohead/0.1.0-SNAPSHOT/" (22244 43538 0 0) "_maven.repositories" "radiohead-0.1.0-SNAPSHOT.pom" "radiohead-0.1.0-SNAPSHOT.jar" "maven-metadata-local.xml" "../" "./")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

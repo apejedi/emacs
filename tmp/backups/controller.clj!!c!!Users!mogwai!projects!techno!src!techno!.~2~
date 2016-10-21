@@ -1,0 +1,75 @@
+(ns techno.controller
+  (:use [overtone.core]
+        [overtone.osc.peer]
+        [techno.core :as core]
+        [techno.sequencer :as s]
+        [techno.sketches])
+  )
+
+(zero-conf-on)
+
+(defonce server (atom (osc-server 4410 "techno")))
+
+(defonce queue? (atom false))
+
+(defonce sketch (atom {}))
+
+(defonce client (atom (osc-client "192.168.0.19" 9000)))
+
+(defn load-handlers []
+  (osc-rm-all-handlers @server)
+  (doall
+   (map (fn [[k v] num]
+          (osc-send @client (str "/sketch/label" num) (name k))
+          (osc-handle
+           @server (str "/sketch/toggle" num)
+           (fn [msg]
+             (let [arg (first (:args msg))]
+               (if (> arg 0)
+                 (s/add-p @core/s-player (get @sketch k) k)
+                 (s/rm-p @core/s-player k)
+                 ))))
+          )
+        @sketch (range 1 (inc (count (keys @sketch))))
+        ))
+  (osc-handle
+   @server "/sketch/play"
+   (fn [msg]
+     (let [arg (first (:args msg))]
+       (if (> arg 0)
+         (core/start-player)
+         (kill @core/s-player)
+         )
+       )))
+  (osc-handle
+   @server "/sketch/tempo"
+   (fn [msg]
+     (let [arg (first (:args msg))]
+       (if (node-active? @core/s-player)
+         (s/set-sp @core/s-player (scale-range arg 0 1 0 3)))
+       )))
+  (osc-handle
+   @server "/sketch/queue"
+   (fn [msg]
+     (let [arg (first (:args msg))]
+       (if (node-active? @core/s-player)
+         (s/set-sp @core/s-player (scale-range arg 0 1 0 3)))
+       )))
+  )
+
+(comment
+  (osc-send @client "/sketch/label1" "pattern1")
+  ;; (add-watch
+  ;;  sketch :sketch-changed
+  ;;  (fn [key reference old new]
+  ;;    (load-handlers)
+  ;;    ))
+  (do
+    (swap!
+     sketch
+     (fn [_]
+       track1
+       ))
+    (load-handlers)
+    )
+  )

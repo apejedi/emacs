@@ -1,0 +1,6 @@
+(ns techno.controller
+  (:use [overtone.core]
+        [overtone.osc]
+        [techno.core :as core]
+        [techno.sequencer :as s])
+  )

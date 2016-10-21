@@ -1,0 +1,128 @@
+mkdir src/techno/sequencer
+mv src/techno/sequencer2.clj src/techno/sequencer/
+cd ../../
+cd ../
+cd ../
+mkdir sequencer
+cd sequencer/
+git init
+ls
+lein new
+lein new default sequencer
+ls
+cd ../
+rm -rf sequencer
+lein new default sequencer
+cd sequencer/
+ls
+git init
+ls src/sequencer/
+cp ../techno/src/techno/sequencer/* src/sequencer/
+cd src/sequencer/
+rm at_at.clj 
+rm sequencer2.clj
+rm player.clj
+rm core.clj
+ls
+lein --version
+cd ../../
+cd ../
+cd techno/
+git add src
+git commit -m "things"
+cd ~/projects/
+mkdir synths
+cd synths/
+lein help
+lein help templates
+ls
+lein new lib
+lein help new
+ls
+cd ../
+rm -rf synths
+lein new synths
+ls
+cd synths/
+ls
+cd ../techno/
+git diff src/techno/sequencer.clj
+cd d:/supercollider/
+git pull
+cd ~/projects/techno/
+git add src
+cd ../../
+cd ../
+cd techno/
+git add src
+git add src
+git add src
+cd ../../
+git add src
+cd ../../
+git add sec
+git add src
+git commit -m "controller"
+git add src
+git commit -m "more controller logic"
+ls
+git add src
+git commit -m "changes"
+cd ~/projects/techno
+git add src
+cp ~/.emacs .
+mv .emacs src/
+git add src
+git commit -m "changes"
+git add src
+git commit -m "dank patterns"
+mkdir src/techno/sketches
+cd ../../
+find.exe . -iname *brush*
+dir *brush* /b/s
+cd ..
+rm -rf clomacs-20160920.42
+rm clomacs-readme.txt
+mv ~/.emacs.d/packs/stable/clojure-pack/lib/cider ~/
+cd ~/
+mv .emacs.d/packs/dev/clojure-pack/lib/cider ~/cider-dev
+rm -rf ~/.emacs.d/elpa/cider-20160914.2335
+rm -rf ~/.emacs.d/elpa/clomacs-20160920.42
+cd ~/projects/techno/
+lein repl
+cp ~/cider ~/.emacs.d/packs/stable/clojure-pack/lib/
+cp -r ~/cider ~/.emacs.d/packs/stable/clojure-pack/lib/
+ls ~/.emacs.d/packs/stable/clojure-pack/lib/
+rm -rf ~/.emacs.d/packs/stable/clojure-pack/lib/cider
+cp -r ~/projects/cider ~/.emacs.d/packs/stable/clojure-pack/lib/
+cp -r ~/projects/clomacs ~/.emacs.d/packs/stable/clojure-pack/lib/
+cd ~/projects/
+mkdir spinner
+cd spinner/
+git clone https://github.com/Malabarba/spinner.el .
+cd ..
+ls ~/.emacs.d/packs/stable/clojure-pack/lib/
+cp -r ~/projects/spinner ~/.emacs.d/packs/stable/clojure-pack/lib/
+cd ~/.emacs.d/
+ls
+rm -rf elpa/clomacs-20160920.42
+cp -r ~/cider .emacs.d/packs/stable/clojure-pack/lib/
+cp -r cider ~/.emacs.d/packs/stable/clojure-pack/lib/
+cp -r cider ~/.emacs.d/packs/stable/clojure-pack/lib/
+cd ~
+cp -r cider .emacs.d/packs/stable/clojure-pack/lib/
+cd ~
+cp ~/.emacs.d/packs/stable/clojure-pack/lib/clomacs/src/elisp/clomacs.el ~/.emacs.d/packs/stable/clojure-pack/lib/clomacs/
+cd ~/projects/techno
+cd techno
+lein install
+rm src/techno/log.txt 
+lein install
+lein cljfmt check
+lein update
+lein upgrade
+lein install
+lein cljfmt check
+lein cljfmt check src/techno/test.clj
+lein repl
+rm src/techno/test.clj

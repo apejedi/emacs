@@ -1,0 +1,4 @@
+(ns techno.motifs
+  (:use [overtone.core]
+        [techno.sequencer :as s])
+  )

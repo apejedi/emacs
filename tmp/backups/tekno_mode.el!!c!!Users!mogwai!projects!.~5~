@@ -1,0 +1,14 @@
+(require 'clomacs)
+
+(clomacs-defun get-patterns techon.core/get-patterns :return-type :list)
+
+(message (symbol-name (car (get-patterns))))
+
+(switch-to-buffer-other-window (get-buffer-create "tekno"))
+
+(ctbl:popup-table-buffer-easy
+ '((1 2 3 4) (5 6 7 8) (9 10 11 12)))
+
+(ctbl:create-table-component-region
+  :model (ctbl:make-model-from-list
+           '((1 2 3 4) (5 6 7 8) (9 10 11 12))))

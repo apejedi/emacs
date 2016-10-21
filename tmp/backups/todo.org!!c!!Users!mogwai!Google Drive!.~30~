@@ -1,0 +1,72 @@
+* Algorithmic beats
+Have a function that given a few parameters
+parameters
+
+
+
+creates a pattern which fits in a 4 beat pattern and "fits/aligns?"
+conditions
+starts and ends on strong beats or aligns with the start and end of base beat
+size is multiple of of base beat (most important?)
+
+the created pattern would either come in on a on-beat/off-beat
+and repeat only every n cycles
+
+
+* Material
+Have a distinct goal for each session
+
+Need fully fleshed out tracks
+with atleast three transitions/phases
+
+Spend long time on each track
+idea is to add and shape elements until it becomes a whole
+
+Make beat sequencer layout
+
+
+** Paramterized patterns
+A function which returns a pattern using the given parameters
+a callable synth similar to defsynth? easy to specify defaults
+m-args, phase
+
+
+** techno track
+1 make a tb-303 instrument and make it usable
+2 gather samples or percussion instruments
+3 analyze and work on rhythms
+
+timbres elements closely tied to drums
+
+with bass, harsh timbres
+fast tempo beats and syncopation
+
+
+
+* Songs
+blues run the game
+on
+salt remains
+shaking hand
+x-naut fortress
+glower
+lumen
+pyramid song
+
+
+
+
+* Stochastic arpeggios
+generate a sequence of notes given a scale, chord, degree etc
+generate a sequence given a "color" factor e.g. consonant, vaguely dissonant, dissonant
+
+* Stochastic phrases
+Add logic to create phrases stochastically
+start with a base phrase
+apply transformations probabilistcally
+1 reverse
+2 sputter
+3 shuffle actions within a local area
+4 jump octaves
+
+sputter/shuffle only for non-empty actions?

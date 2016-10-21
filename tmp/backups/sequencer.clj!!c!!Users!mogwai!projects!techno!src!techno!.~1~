@@ -1,0 +1,5 @@
+(ns techno.sequencer)
+
+(defn sequencer [pattern metro]
+
+  )

@@ -1,0 +1,54 @@
+false(def mystery
+    {:a (let [a (concat (mapcat #(vector % [:amp 0.2]) (chord :G4 :minor)) [:A4])
+              b (concat (mapcat #(vector % [:amp 0.2]) (chord :G4 :minor)) [:Bb4])
+              c (concat (mapcat #(vector % [:amp 0.2]) (chord :F4 :minor)) [:G4])
+              d (concat (mapcat #(vector % [:amp 0.2]) (chord :F4 :minor)) [:Bb4])]
+          (s/phrase-p
+           piano
+           [a b a b a b a b a b
+            c d c d c d c d c d c d]
+           0.25
+           0
+           [:coef 0.01]))
+     }
+    )
+
+  (def arpeggi
+    {:a (s/phrase-p
+         ks1
+         [:G4 :A4 :C#5 :B4 :A4 :G4 :D5]
+         0.25
+         0 [:atk 0.001 :amp 0.6 :coef 0.01 :dur 1])
+     :b (let [a [:D5 :G4 :E4]
+              b [:E5 :A4 :F#4]
+              c [:A5 :D5 :B4]
+              d [:F#5 :D5 :B4]]
+          (s/phrase-p
+           klang-test
+           (concat a a a a a a
+                   b b b b b b
+                   c c c c c c
+                   d d d d d d)
+           0.25 0 [:coef 0.01 :amp 0.8 :atk 0.01 :dur 2]))
+     :c (s/phrase-p
+         bpfsaw
+         [:F#5 :G5 :A5 :4]
+         0.25 1 [:dur 0.7 :atk 0.01 :amp 0.2])
+     :d (let [d :D4 e :E4 a :A4 g :G4 f :F#4]
+          (s/phrase-p
+           bpfsaw
+           [d d d d e e e e a a a a g g g g f f f f]
+           0.25 0 [:dur 1.5 :amp 0.5 :attack 0.5 :release 1]))
+     :e (fn [b]
+          (get
+           {10 (s/chord-p flute [:G4 :A4 :D5] [:dur 2])
+            12 (s/chord-p flute [:G4 :A4 :C#5] [:dur 2])
+            14 (s/chord-p flute [:G4 :A4 :B4] [:dur 2])
+            } b)
+          ;; (s/phrase-p
+          ;;  flute
+          ;;  [[:G4 :A4 :D5] [:G4 :A4 :C#5] [:G4 :A4 :B4]]
+          ;;  0.25 9 [:dur 3])
+          )
+     }
+    )(def mystery {:a (let [a (concat (mapcat \# (vector % [:amp 0.2]) (chord :G4 :minor)) [:A4]) b (concat (mapcat \# (vector % [:amp 0.2]) (chord :G4 :minor)) [:Bb4]) c (concat (mapcat \# (vector % [:amp 0.2]) (chord :F4 :minor)) [:G4]) d (concat (mapcat \# (vector % [:amp 0.2]) (chord :F4 :minor)) [:Bb4])] (s/phrase-p piano [a b a b a b a b a b c d c d c d c d c d c d] 0.25 0 [:coef 0.01]))})(def arpeggi {:a (s/phrase-p ks1 [:G4 :A4 :C#5 :B4 :A4 :G4 :D5] 0.25 0 [:atk 0.001 :amp 0.6 :coef 0.01 :dur 1]), :b (let [a [:D5 :G4 :E4] b [:E5 :A4 :F#4] c [:A5 :D5 :B4] d [:F#5 :D5 :B4]] (s/phrase-p klang-test (concat a a a a a a b b b b b b c c c c c c d d d d d d) 0.25 0 [:coef 0.01 :amp 0.8 :atk 0.01 :dur 2])), :c (s/phrase-p bpfsaw [:F#5 :G5 :A5 :4] 0.25 1 [:dur 0.7 :atk 0.01 :amp 0.2]), :d (let [d :D4 e :E4 a :A4 g :G4 f :F#4] (s/phrase-p bpfsaw [d d d d e e e e a a a a g g g g f f f f] 0.25 0 [:dur 1.5 :amp 0.5 :attack 0.5 :release 1])), :e (fn [b] (get {10 (s/chord-p flute [:G4 :A4 :D5] [:dur 2]), 12 (s/chord-p flute [:G4 :A4 :C#5] [:dur 2]), 14 (s/chord-p flute [:G4 :A4 :B4] [:dur 2])} b))})false

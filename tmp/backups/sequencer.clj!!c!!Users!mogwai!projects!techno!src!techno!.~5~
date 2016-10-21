@@ -1,0 +1,153 @@
+(ns techno.sequencer
+  (:use [overtone.core]
+        [overtone.inst.drum]
+        )
+  )
+
+
+(def pattern
+  (atom {
+         1 [dance-kick []]
+         2 [bing []]
+         3 [bing []]
+         4 [noise-snare []]
+         5 [bing []]
+         6 [dance-kick []]
+         7 [bing []]
+         8 [bing []]
+         9 [noise-snare []]
+         10 [dance-kick []]
+         })
+  )
+
+(swap! pattern
+       (fn [_]
+          (gen-pattern 20)
+         )
+       )
+(def t (sequencer pattern 10))
+
+(snd "/n_query" (to-sc-id t))
+
+
+(ctl t :clock-speed 10)
+(ctl t :pattern-size 20)
+(def s (syncopate t))
+(kill t)
+(kill s)
+(stop)
+
+
+(defn get-rand-int [min max]
+  (+ (rand-int (- max min)) min)
+  )
+
+(defsynth syncopation-synth [freq 1 uid 0]
+    "A synth to randomly modulate the clock speed of a trigger synth"
+    (let [trigger (dust:kr freq)]
+      (send-trig:kr trigger uid)
+    )
+    )
+
+
+(defn syncopate
+  ([trig-synth] (syncopate trig-synth 1))
+  ([trig-synth freq]
+   (let [uid (trig-id)
+         synth (syncopation-synth freq uid)
+         ]
+     (println "adding handler on " uid)
+     (on-trigger uid
+                 (fn [_]
+                   (ctl trig-synth :clock-speed (get-rand-int 10 20))
+                   )
+                 ::syncopate)
+     synth
+     ))
+  )
+(remove-event-handler ::syncopate)
+
+
+(defn pp-pattern [pattern]
+  (println "{")
+  (doseq [i (sort (keys pattern))]
+    (print i " ")
+    (doseq [[instrument args] (partition 2 (pattern i))]
+      (print "[" (.name instrument) args "]"))
+    (println)
+    )
+  (println "}")
+  )
+
+
+(defn gen-pattern [size]
+  (let [pattern {}
+        instruments [dance-kick noise-snare bing]]
+    (reduce
+     (fn [pattern beat]
+       (let [instrument (choose instruments)
+             scale (scale (choose [:Bb4 :C#5]) (choose [:major :minor]))
+             ]
+         (assoc pattern
+                beat
+                (vector
+                 instrument
+                 []
+                 (if (= instrument dance-kick)
+                   [:decay (- 2 (rand 1.5))
+                    ;:freq (midicps (choose scale))
+                    ]
+                   [])
+                 )
+                )))
+     {}
+     (range 1 (inc size))
+     )
+    )
+  )
+
+(defn player
+  [cur-beat pattern]
+  (let [beat-actions (pattern (int cur-beat))]
+    (dorun
+     (for [[instrument args] (partition 2 beat-actions)]
+       (do
+         (apply instrument args)
+         )
+       ))
+    )
+  )
+
+
+(defsynth trigger-synth [clock-speed 128 uid 0 pattern-size 4]
+  (let [trigger (impulse:kr clock-speed)
+        count (stepper:kr trigger :min 1 :max pattern-size)]
+    (send-trig:kr trigger uid count)
+    )
+  )
+
+
+(defn sequencer
+  "Creates and starts a sequencer
+  args: [pattern (atom {1 [instrument1 [instrument1 args]...] 2 [instrument2 [instrument2 args]]})   clock-speed 1(per second)]
+  "
+  ([pattern] (sequencer pattern 1))
+  ([pattern clock-speed]
+   (let [
+         uid (trig-id)
+         synth (trigger-synth clock-speed uid (count (if (=  (type pattern) clojure.lang.Atom)
+                                                   @pattern
+                                                   pattern)))
+         ]
+     (on-trigger uid
+                 (fn [beat]
+                   (player beat
+                           (if (=  (type pattern) clojure.lang.Atom)
+                             @pattern
+                             pattern))
+                   )
+                 ::sequencer)
+     synth
+     )
+   )
+  )

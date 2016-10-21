@@ -1,0 +1,6 @@
+(ns techno.synths
+  (:use [overtone.core]
+        [overtone.inst.synth])
+  )
+
+(def)

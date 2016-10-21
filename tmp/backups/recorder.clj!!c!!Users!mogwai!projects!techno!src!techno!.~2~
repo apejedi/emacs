@@ -1,0 +1,42 @@
+(ns techno.recorder
+  (:import (javax.swing JTextPane))
+  )
+
+(defn start-recorder []
+  (let [pane (JTextPane.)]
+    (.setVisible pane true)
+      )
+  )
+
+(start-recorder)
+
+
+(defn test-instrument [instruments]
+  (loop [position 0 insts (cycle instruments)]
+    (let [key-pressed (read-line)
+          pos (if (.equals "," key-pressed) (+ 26 position) position)
+          index (+ pos (Math/abs (- 97 (int (.charAt key-pressed 0)))))
+          inst (nth insts index)
+          display (if (contains? inst :name)
+                    (.name inst)
+                    inst
+                    )
+          ]
+      (println display " current position: " pos)
+      (if (not (nil? inst)) (inst))
+      (if (.equals "." key-pressed)
+        nil
+        (recur pos insts)
+        )
+      ))
+  )
+
+
+(defn crawl [graph f]
+  (doseq [[k v] graph]
+    (if (map? v)
+      (crawl v f)
+      (f v)
+      )
+    )
+  )

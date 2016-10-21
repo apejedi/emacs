@@ -1,0 +1,62 @@
+(ns techno.drum-patterns
+  (:use [techno.drums]
+        [techno.sequencer :as s]
+        [techno.core :as core]
+        [techno.synths])
+  )
+(defonce there-there (atom nil))
+
+(swap! there-there
+       (fn [_]
+         (build-from-kits
+          [:Kit3-Acoustic]
+          {1 ["Kick-02"]
+           2 ["Tom-01" "SdSt-07"]
+           2.5 ["SdSt-05"]
+           ;2.5 ["SdSt-04" "SdSt-07"]
+           ;2.75 ["SdSt-05"]
+           2.75 []
+           }
+          )
+         ))
+
+(def pulse
+  (build-from-kits
+   [:Kit3-Acoustic]
+   {1 [[zap []]]
+    1.75 [[zap []]]
+    3.5 [[zap []]]
+    4.25 []
+    }
+   ))
+
+(def boc-beat
+  {1 [zap [:amp 0.01] dub-kick [200 :amp 1.5]]
+   1.25 [dub-kick [100 :amp 1.5]]
+   2 [zap [:amp 0.01] dub-kick [100 :amp 1.5]]
+   2.5 [zap [:amp 0.01] dub-kick [100 :amp 1.5]]
+   2.75 [zap [:amp 0.01] dub-kick [200 :amp 1.5]]
+   3 [zap [:amp 0.01] dub-kick [100 :amp 1.5]]
+   3.25 [zap [:amp 0.01] dub-kick [200 :amp 1.5]]
+   3.75 []
+   }
+  )
+
+(comment
+  (s/set-st core/player (double (/ 1 8)))
+  (s/add-p core/player boc-beat :main)
+  (dub-kick 200 :amp 1.5)
+  (s/add-p core/player
+           (build-from-kits
+            [:Kit3-Acoustic]
+            {1 [[zap [:amp 0.01]] [dub-kick [200 :amp 1.5]]]
+             1.75 [[zap [:amp 0.01]] [dub-kick [200 :amp 1.5]]]
+             3.5 [[zap [:amp 0.01]] [dub-kick [200 :amp 1.5]]]
+             4.5 []
+             }
+            ) :pulse)
+  (s/add-p core/player
+           [[(get-in drum-kits [:Kit3-Acoustic :CyCdh_K3ClHat-02.wav]) []]] :hat)
+  (s/rm-p core/player :pulse)
+  (s/wrap-p core/player :pulse false)
+  )

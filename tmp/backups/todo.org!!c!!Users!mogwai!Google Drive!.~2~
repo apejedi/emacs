@@ -1,0 +1,34 @@
+* Theory
+Practice sightreading stuff for this week
+
+** Songs to analyze
+brace yourself jason
+Lumen
+glower
+
+
+* Techno track
+
+** Overtone vs SuperCollider
+| Overtone                      | SuperCollider                                       |
+| Has only at-at for scheduling | Has patterns                                        |
+| can use emacs and repl        |                                                     |
+| Has namespaces etc            | More verbose? Files could become large and unwieldy |
+
+
+Stick with overtone for now
+
+** Timing
+*** Pulse Input signals
+won't work with existing synthdefs
+
+** Percussion
+Investigate if synths inside other synths can be triggered using signals
+
+Analyze how overtone constructs and loads synths on server
+
+** Bass
+
+** Melodic motifs
+
+** Harmonic intervention

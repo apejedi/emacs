@@ -1,0 +1,99 @@
+(ns techno.sketches-live)
+
+(def track1
+  {:a (let [c #(chord-degree % :C4 :minor)]
+        (s/phrase-p
+         sweet
+         [(c :vi) (c :v) (c :iv) (c :ii) :3]
+         ;[(c :ii) :1 (c :iii) :1 (c :iv) :1 (conj (c :v) (note :C5)) :3]
+         0.25 3 [:amp 0.2 :dur 1 :coef 0.01 :attack 1 :release 2]))
+   :a2 (let [ch #(chord-degree % :C4 :minor)
+             [a b c d] (map ch [:vi :v :iv :ii])
+             args {:amp 0.2 :dur 1 :coef 0.01 :attack 1 :release 2}
+             l (assoc args :dur 3)]
+        (s/phrase-p
+         sweet
+         [a b c (mapcat #(vector % (flatten (into [] l))) d) :6]
+         0.25 3 (flatten (into [] args))))
+   :b (let [root :C4
+            type :minor
+            args [:coef 0.001 :amp 0.4 :atk 0.01 :dur 1]
+            inst ks1
+            v (flatten (repeat 8 (chord-degree :v root type 4)))
+            i (flatten (repeat 8 (chord-degree :iv root type 4)))]
+        (s/arp-p inst (concat v i) args 0)
+        )
+   :b2 (fn [b]
+         (if (= (rand-int 3) 0)
+             (let [notes (concat (chord-degree :v :C4 :minor 4) (chord-degree :i :C4 :minor 4))]
+               [piano [(choose notes) :dur 3]]
+               )))
+   :c (s/phrase-p
+       overpad
+       (concat (chord-degree :v :C4 :minor) [:3] (chord-degree :i :C4 :minor))
+       0.25 0 [:dur 1 :amp 0.5]
+       {:refresh 1 :reverse 0.3 :sputter 0.8 :sputter-amt 0.2}
+       )
+   :d (build-from-kits [:Kit10-Vinyl :Kit15-Electro]
+                       {
+                        1 ["Perc01"]
+                        1.5 ["ClHat01"]
+                        })
+   :e (build-from-kits [:Kit10-Vinyl]
+                       {
+                        1 ["Perc02"]
+                        1.25 ["Perc03"]
+                        2 ["Perc04"]
+                        2.75 []
+                        }
+                       )
+   :main1 beat
+   :main2 (:bomba @beats)
+   :main3 (:four-beat @beats)
+   })
+
+(def track2
+  {:harmony (s/phrase-p
+             overpad
+             [[:E4 :G4 :B4 :D5] :24
+              [:D4 :F4 :A4] :22]
+             0.25 0 [:attack 2 :release 5 :amp 0.2])
+   :bells (s/phrase-p
+           bpfsaw
+           [[:D5 :F4] [:E5 :G4] :1 [:D5 :F4] [:E5 :G4] :2
+            [:D5 :F4] [:E5 :G4] :3]
+           0.25 0 [:amp 0.5 :atk 0.01])
+   :whistle {
+             1 [whistle [:freq1 (midi->hz (note :D5)) :freq2 (midi->hz (note :A6)) :dur 3 :amp 0.3]]
+             8 [whistle [:freq1 (midi->hz (note :A6)) :freq2 (midi->hz (note :E5)) :dur 3 :amp 0.3]]
+             12.75 []}
+   :kicks (let [k "Kick-01" s "Snr03"]
+            (build-from-kits
+             [:Kit3-Acoustic :Kit16-Electro]
+             [[k [dub-kick [100 :amp 1]]] :3]
+             0.25))
+   :sdst (let [c1 "ClHat02" c2 "ClHat01" a [:amp 0]]
+           (build-from-kits
+            [:Kit16-Electro]
+            [[c1] :2 [c1] :2 [c1] :1 [c1] [c2] [c1] :5]
+            0.25))
+   :hat (let [o "OpHat"]
+            (drum-pattern
+             [:Kit16-Electro]
+             [:2 [o] :1]
+             0.25))
+   :sdst2 (let [s3 "SdSt-03"
+                s6 "SdSt-06"
+                s7 "SdSt-07"
+                s4 "SdSt-04"]
+           (drum-pattern
+            [:Kit3-Acoustic]
+            [[s6] :2 [s6] :2 [s6] :1 [s6] [s7] [s6] :5]
+            0.25 [:amp 0.6]))
+   ;; :f (let []
+   ;;      (s/phrase-p
+   ;;       plk-bass
+   ;;       [:D3 :G3 :C3 :A3]
+   ;;       0.25 4 [:dur 2]))
+   }
+  )

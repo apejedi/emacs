@@ -1,0 +1,140 @@
+(ns techno.track1
+  (:import java.util.concurrent.ThreadLocalRandom)
+  (:use [overtone.core]
+        [overtone.inst.synth]
+        [techno.core :as core]
+        [techno.sequencer :as s]
+        [techno.synths]
+        [techno.drum-patterns]
+        [techno.drums]
+        [techno.controller]))
+(comment
+  (do (swap!
+       (:a @sketch)
+       (fn [_]
+         (let [c #(chord-degree % :C4 :minor)]
+           (s/phrase-p
+            sweet
+            [(c :vi) (c :v) (c :iv) (c :ii) :3]
+            0.25 3 [:amp 0.2 :dur 1 :coef 0.01 :attack 1 :release 2])))) nil)
+  (s/set-arg @core/s-player :a :amp 1)
+
+  (do (swap!
+       (:a2 @sketch)
+       (fn [_]
+         (let [c #(chord-degree % :C4 :minor 4)]
+           (s/phrase-p
+            sweet
+            [(c :v) (c :ii) (c :vi) (c :i) :3]
+            0.25 3 [:amp 0.2 :dur 1 :coef 0.01 :vib 0])))) nil)
+  (s/set-arg @core/s-player :a2 :amp 1)
+
+  (do (swap!
+       (:b @sketch)
+       (fn [_]
+         (let [root :C4
+               type :minor
+               args [:coef 0.001 :amp 0.4 :atk 0.01 :dur 1]
+               inst ks1
+               v (flatten (repeat 8 (chord-degree :v root type 4)))
+               i (flatten (repeat 8 (chord-degree :iv root type 4)))]
+           (s/arp-p inst (concat v i) args 0)
+           ))) nil)
+  (s/set-arg @core/s-player :b :amp 1)
+
+  (do (swap!
+       (:b2 @sketch)
+       (fn [_]
+         (fn [b]
+           (if (or (= (rand-int 4) 0)
+                   (integer? b) (= (mod b (int b)) 0.5) (= (mod b (int b)) 0.75)
+                   )
+             (let [notes (concat (chord-degree :ii :C4 :minor 4) (chord-degree :iii :C4 :minor 4)
+                                 (chord-degree :v :C4 :minor 4))]
+               [(choose [piano]) [(choose notes) :dur 1 :amp 0.2 :coef 0.05]
+                (choose [piano]) [(choose notes) :dur 1 :amp 0.15 :coef 0.05]]
+               ))))) nil)
+  (s/set-arg @core/s-player :b2 :amp 1)
+
+  (do (swap!
+       (:c @sketch)
+       (fn [_]
+         (s/phrase-p
+          overpad
+          (concat (chord-degree :v :C4 :minor) [:3] (chord-degree :i :C4 :minor))
+          0.25 0 [:dur 1 :amp 0.5]
+          {:refresh 1 :reverse 0.3 :sputter 0.8 :sputter-amt 0.2}
+          ))) nil)
+  (s/set-arg @core/s-player :c :amp 1)
+
+  (do (swap!
+       (:d @sketch)
+       (fn [_]
+         (drum-p [:Kit10-Vinyl :Kit15-Electro] [:p1 :1 :c1]))) nil)
+  (s/set-arg @core/s-player :d :amp 1)
+
+  (do (swap!
+       (:e @sketch)
+       (fn [_]
+         (drum-p [:Kit10-Vinyl] [:p2 :p3 :2 :p4 :3]))) nil)
+  (s/set-arg @core/s-player :e :amp 1)
+
+  (do (swap!
+       (:toms @sketch)
+       (fn [_]
+         (s/m-phrase
+          {:refresh 0 :sputter 0.5 :sputter-amt 0.3 :reverse 0.5}
+          (s/fit-p {1.75 []} (drum-p [:KurzweilKit08] [:t3 :1 :t4 :t3 :1 :t4 :1]))
+          0.25))) nil)
+  (s/set-arg @core/s-player :toms :amp 1)
+
+  (do (swap!
+       (:beat1 @sketch)
+       (fn [_]
+         (s/fit-p {1.75 []}
+                  (drum-p [:KurzweilKit07] [:1 :sd :1 :sd :1])))) nil)
+  (s/set-arg @core/s-player :beat1 :amp 1)
+
+  (do (swap!
+       (:beat2 @sketch)
+       (fn [_]
+         (s/fit-p {1.75 []}
+                  (drum-p [:KurzweilKit08] [:sd1 :1 :sd1 :sd1 :sd2 :1 :sd1 :1])))) nil)
+  (s/set-arg @core/s-player :beat2 :amp 1)
+
+  (do (swap!
+       (:shkr @sketch)
+       (fn [_]
+         (s/fit-p {1.75 []} (drum-p [:Kit8-Vinyl] [:shkr3 :shkr3 :shkr1 :1])))) nil)
+  (s/set-arg @core/s-player :shkr :amp 1)
+
+  (do (swap!
+       (:congas @sketch)
+       (fn [_]
+         (gen-beat (:four-beat @beats)
+                   (map #(vector % [:amp 1]) (concat (vals (drum-kits :Congas))
+                                                     (vals (drum-kits :Bongos))
+                                                     ))
+                   12
+                   true true 1 0.3 0))) nil)
+  (s/set-arg @core/s-player :congas :amp 1)
+
+  (do (swap!
+       (:main1 @sketch)
+       (fn [_]
+         (drum-p [:Kit10-Vinyl] [[:k1 :c1] :k4 :p4 :1 :s2 :1 :p3 :5 :s2 :3]))) nil)
+  (s/set-arg @core/s-player :main1 :amp 1)
+
+  (do (swap!
+       (:main2 @sketch)
+       (fn [_]
+         (drum-p [:Kit10-Vinyl] [[:k1 :k4] :1 :p1 :k1 :k2 :p1 :k1 :1]))) nil)
+  (s/set-arg @core/s-player :main2 :amp 1)
+
+  (do (swap!
+       (:main3 @sketch)
+       (fn [_]
+         (drum-p [:Kit10-Vinyl] [:k1 :1 :c1 :1 :s2 :1 :c1 :1]))) nil)
+  (s/set-arg @core/s-player :main3 :amp 1)
+
+  )
