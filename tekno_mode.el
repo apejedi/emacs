@@ -16,6 +16,12 @@
 (set-face-background 'ctbl:face-cell-select "yellow")
 (set-face-bold-p 'ctbl:face-cell-select t)
 
+(defvar tekno:uid 1)
+
+(defun tekno:uid ()
+  "[internal] Generate an unique number."
+  (incf tekno:uid))
+
 
 
 (defun ctbl:dest-ol-selection-set (dest cell-id)
@@ -59,6 +65,7 @@
   )
 ;; (load-patterns-from-buffer "sketches.clj" "ambient2")
 ;; (update-pattern-view)
+
 
 
 (defun pattern-add-q ()
@@ -142,17 +149,18 @@
   )
 
 (defun add-pattern-key (key)
-  (let* ((pattern (gethash key pattern-data)))
-    ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print pattern))
-    (nrepl-sync-request:eval
-     (concat "(use '[overtone.core]
+  (let* ((pattern (gethash key pattern-data))
+         (body (concat "(use '[overtone.core]
         '[overtone.inst.synth]
         '[techno.core :as core]
         '[techno.sequencer :as s]
         '[techno.synths]
         '[techno.drum-patterns]
-        '[techno.drums]) (s/add-p core/player " pattern " " key ")")
+        '[techno.drums]) (s/add-p core/player " pattern " " key ")")))
+    ;; (with-output-to-temp-buffer "*scratch*"
+    ;;   (print body))
+    (nrepl-sync-request:eval
+     body
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
       (update-pattern-view))
@@ -252,6 +260,7 @@
   )
 
 (defun update-pattern-view ()
+  (interactive)
   (let ((p (point)))
       (setq current-playing-patterns (get-patterns))
     (ctbl:cp-set-model techno-patterns (build-pattern-model))
@@ -266,4 +275,28 @@
       (read-only-mode t)
       )
     )
+  )
+
+(defun new-pattern (&optional type)
+  (interactive)
+  (let ((type (read-string "Type: ")))
+      (cond ((string= type "phrase")
+             (puthash (concat ":phrase" (format "%s" (tekno:uid)))
+                      "(let []
+     (s/phrase-p
+      bass-synth
+      []
+      0.25 1 [:attack 0.1 :release 0.3])
+    )" pattern-data))
+            ((string= type "drum")
+             (puthash (concat ":drum" (format "%s" (tekno:uid)))
+                      "(let []
+     (drum-p
+      [:Kit4-Electro]
+      [])
+    )" pattern-data))
+            (t (puthash (concat ":pattern" (format "%s" (tekno:uid)))
+                        "(let []
+    )" pattern-data))))
+  (update-pattern-view)
   )
