@@ -1,12 +1,12 @@
 
 ;; ----- smex-history -----
 (
- proced
- cider-quit
- eval-region
- cider-eval-buffer
+ grep
+ describe-variable
  cider-jack-in
  describe-function
+ proced
+ eval-region
  describe-key
 )
 
@@ -22,12 +22,12 @@
  (cider-quit . 172)
  (cider-eval-region . 9)
  (replace-regexp . 2)
- (grep . 79)
+ (grep . 83)
  (edit-picture . 1)
  (replace-string . 87)
  (orgtbl-create-or-convert-from-region . 1)
  (org-table-insert-row . 2)
- (cider-jack-in . 181)
+ (cider-jack-in . 183)
  (describe-key . 67)
  (paredit-forward-slurp-sexp . 7)
  (paredit-backward-barf-sexp . 1)
@@ -42,8 +42,8 @@
  (eval-region . 763)
  (end-of-buffer . 1)
  (org-occur . 1)
- (describe-variable . 11)
- (describe-function . 36)
+ (describe-variable . 14)
+ (describe-function . 37)
  (insert-char . 4)
  (proced . 377)
  (ediff-scroll-horizontally . 1)

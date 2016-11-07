@@ -61,7 +61,7 @@ If can't find any nREPL process return nil."
   (if (> (length cider-connections) 0)
       (if library
           (clomacs-search-connection library)
-        (or (clomacs-search-connection "clomacs")
+        (or ;(clomacs-search-connection "clomacs")
             ;(clomacs-search-connection "localhost")
             (cider-current-connection)))))
 
