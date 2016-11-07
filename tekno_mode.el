@@ -63,7 +63,14 @@
       )
     (setq pattern-data table))
   )
-;; (load-patterns-from-buffer "sketches.clj" "ambient2")
+
+(defun load-patterns ()
+  (interactive)
+  (let* ((s (read-string "Sketch: ")))
+    (load-patterns-from-buffer "sketches.clj" s)
+    (update-pattern-view))
+  )
+;; (load-patterns-from-buffer "sketches.clj" "track2")
 ;; (update-pattern-view)
 
 
@@ -141,6 +148,58 @@
   )
 
 
+(defun start-player ()
+  (interactive)
+  (nrepl-sync-request:eval
+   "(ns techno.core
+  (:use [overtone.core]
+        [techno.sequencer :as s]
+        )
+  (:require [techno.core :as core]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.tools.reader.reader-types :as readers]
+            [clojure.string :as string]))
+(if (or (nil? player) (not (node-active? player)))
+      (def player (s/get-s
+                   (/ 80 60)
+                   )))"
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection)))
+  )
+(defun set-player-sp ()
+  (interactive)
+  (let ((sp (read-string "Speed: ")))
+      (nrepl-sync-request:eval
+       (concat "(ns techno.core
+  (:use [overtone.core]
+        [techno.sequencer :as s]
+        )
+  (:require [techno.core :as core]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.tools.reader.reader-types :as readers]
+            [clojure.string :as string]))
+(if (and (not (nil? player)) (node-active? player))
+    (s/set-sp player (/ " sp " 60)))")
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection))))
+  )
+
+(defun stop-player ()
+  (interactive)
+  (nrepl-sync-request:eval
+   "(ns techno.core
+        (:use [overtone.core]
+              [techno.sequencer :as s]
+              )
+        (:require [techno.core :as core]
+                  [clojure.tools.reader.edn :as edn]
+                  [clojure.tools.reader.reader-types :as readers]
+                  [clojure.string :as string]))
+(kill player)"
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection)))
+  )
+
 
 
 (defun add-pattern ()
@@ -150,7 +209,7 @@
 
 (defun add-pattern-key (key)
   (let* ((pattern (gethash key pattern-data))
-         (body (concat "(use '[overtone.core]
+         (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
         '[overtone.inst.synth]
         '[techno.core :as core]
         '[techno.sequencer :as s]
@@ -190,10 +249,10 @@
       (erase-buffer)
       (insert (gethash key pattern-data))
       ;(insert (concat ";;" key))
-      (pp-buffer)
+      (save-excursion
+        (indent-region (point-min) (point-max) nil))
       (local-set-key (kbd "C-x C-z") 'save-buffer)
-      (local-set-key (kbd "C-x C-a") 'save-add-pattern)
-      )
+      (local-set-key (kbd "C-x C-a") 'save-add-pattern))
     (setq current-pattern key)
     (switch-to-buffer-other-window buf)
     )
@@ -241,6 +300,7 @@
                                     ("M-r" . rm-pattern)
                                     ("C-M-x" . pattern-rm-q)
                                     ("C-M-g" . pattern-flush-q)
+                                    ("C-M-u" . update-pattern-view)
 
                                     ("C-e" . ctbl:navi-move-right-most)
                                     ("C-a" . ctbl:navi-move-left-most)
