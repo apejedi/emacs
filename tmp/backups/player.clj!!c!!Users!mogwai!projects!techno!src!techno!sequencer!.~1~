@@ -1,8 +1,0 @@
-(ns techno.sequencer.player
-  (:gen-class
-   :name techno.sequencer.player
-   :init init
-   :state state
-   :import (java.util.TimerTask)
-   )
-  )

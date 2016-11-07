@@ -1,4 +1,0 @@
-(load-file "~/.emacs.d/init.el")
-(set-delete-selection-mode t)
-(global-set-key (kbd "C-x <right>") 'forward-sexp)
-(global-set-key (kbd "C-x <left>") 'backward-sexp)

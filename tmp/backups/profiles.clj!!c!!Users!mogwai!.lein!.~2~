@@ -1,8 +1,0 @@
-{:user
-  {
-  :java-cmd "C:\\Program Files\\Java\\jdk1.8.0_71\\bin\\java.exe"
-  :plugins [
-            [cider/cider-nrepl "0.11.0"]
-    ]
-   }
- }

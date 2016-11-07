@@ -1,3 +1,0 @@
-(ns techno.experiment
-  (:use [overtone.core])
-  )
