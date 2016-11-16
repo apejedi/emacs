@@ -215,7 +215,8 @@
         '[techno.sequencer :as s]
         '[techno.synths]
         '[techno.drum-patterns]
-        '[techno.drums]) (s/add-p core/player " pattern " " key ")")))
+        '[techno.drums]
+        '[techno.melody]) (s/add-p core/player " pattern " " key ")")))
     ;; (with-output-to-temp-buffer "*scratch*"
     ;;   (print body))
     (nrepl-sync-request:eval
