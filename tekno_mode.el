@@ -235,7 +235,39 @@
                      (buffer-string)) pattern-data)
     )
   )
+(defun dec-amp ()
+    (interactive)
+  (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns)))
+    (nrepl-sync-request:eval
+     (concat "(ns techno.core
+        (:use [overtone.core]
+              [techno.sequencer :as s]
+              )
+        (:require [techno.core :as core]
+                  [clojure.tools.reader.edn :as edn]
+                  [clojure.tools.reader.reader-types :as readers]
+                  [clojure.string :as string]))
+(s/mod-amp player " pattern " -0.1)")
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection))))
+ )
 
+(defun inc-amp ()
+    (interactive)
+  (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns)))
+    (nrepl-sync-request:eval
+     (concat "(ns techno.core
+        (:use [overtone.core]
+              [techno.sequencer :as s]
+              )
+        (:require [techno.core :as core]
+                  [clojure.tools.reader.edn :as edn]
+                  [clojure.tools.reader.reader-types :as readers]
+                  [clojure.string :as string]))
+(s/mod-amp player " pattern " 0.1)")
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection))))
+ )
 (defun save-add-pattern ()
   (interactive)
   (save-pattern)
@@ -252,7 +284,7 @@
       ;(insert (concat ";;" key))
       (save-excursion
         (indent-region (point-min) (point-max) nil))
-      (local-set-key (kbd "C-x C-z") 'save-buffer)
+      (local-set-key (kbd "C-x C-z") 'save-pattern)
       (local-set-key (kbd "C-x C-a") 'save-add-pattern))
     (setq current-pattern key)
     (switch-to-buffer-other-window buf)
@@ -302,6 +334,8 @@
                                     ("C-M-x" . pattern-rm-q)
                                     ("C-M-g" . pattern-flush-q)
                                     ("C-M-u" . update-pattern-view)
+                                    ("C-M-<down>" . dec-amp)
+                                    ("C-M-<up>" . inc-amp)
 
                                     ("C-e" . ctbl:navi-move-right-most)
                                     ("C-a" . ctbl:navi-move-left-most)
