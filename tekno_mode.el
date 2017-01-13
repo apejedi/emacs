@@ -4,6 +4,9 @@
 (clomacs-defun get-patterns techno.core/get-patterns :return-type :list)
 
 (clomacs-defun get-patterns-from-string techno.core/get-patterns-from-string :return-type :list)
+
+(clomacs-defun get-pattern-str techno.core/get-pattern-str)
+
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
 (setq pattern-queue-rm '())
@@ -64,12 +67,25 @@
     (setq pattern-data table))
   )
 
+
 (defun load-patterns ()
   (interactive)
   (let* ((s (read-string "Sketch: ")))
     (load-patterns-from-buffer "sketches.clj" s)
     (update-pattern-view))
   )
+
+(defun refresh-patterns ()
+  (interactive)
+  (let* ((s (read-string "type: "))
+         (table (if pattern-data pattern-data (make-hash-table :test 'equal))))
+    (dolist (p (get-patterns))
+      (puthash (symbol-name p) (get-pattern-str p s) table)
+      )
+    (setq pattern-data table)
+    (update-pattern-view))
+  )
+
 ;; (load-patterns-from-buffer "sketches.clj" "track2")
 ;; (update-pattern-view)
 
@@ -153,9 +169,8 @@
   (nrepl-sync-request:eval
    "(ns techno.core
   (:use [overtone.core]
-        [techno.sequencer :as s]
         )
-  (:require [techno.core :as core]
+  (:require [techno.sequencer :as s]
             [clojure.tools.reader.edn :as edn]
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
@@ -172,9 +187,8 @@
       (nrepl-sync-request:eval
        (concat "(ns techno.core
   (:use [overtone.core]
-        [techno.sequencer :as s]
         )
-  (:require [techno.core :as core]
+  (:require [techno.sequencer :as s]
             [clojure.tools.reader.edn :as edn]
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
@@ -189,9 +203,8 @@
   (nrepl-sync-request:eval
    "(ns techno.core
         (:use [overtone.core]
-              [techno.sequencer :as s]
               )
-        (:require [techno.core :as core]
+        (:require [techno.sequencer :as s]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
@@ -212,11 +225,13 @@
          (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
         '[overtone.inst.synth]
         '[techno.core :as core]
-        '[techno.sequencer :as s]
         '[techno.synths]
         '[techno.drum-patterns]
         '[techno.drums]
-        '[techno.melody]) (s/add-p core/player " pattern " " key ")")))
+        '[techno.samples]
+        '[techno.melody])
+         (require '[techno.sequencer :as s])
+         (s/add-p core/player " pattern " " key ")")))
     ;; (with-output-to-temp-buffer "*scratch*"
     ;;   (print body))
     (nrepl-sync-request:eval
@@ -241,9 +256,8 @@
     (nrepl-sync-request:eval
      (concat "(ns techno.core
         (:use [overtone.core]
-              [techno.sequencer :as s]
               )
-        (:require [techno.core :as core]
+        (:require [techno.sequencer :as s]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
@@ -258,9 +272,8 @@
     (nrepl-sync-request:eval
      (concat "(ns techno.core
         (:use [overtone.core]
-              [techno.sequencer :as s]
               )
-        (:require [techno.core :as core]
+        (:require [techno.sequencer :as s]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
@@ -280,7 +293,8 @@
     (with-current-buffer buf
       (funcall 'clojure-mode)
       (erase-buffer)
-      (insert (gethash key pattern-data))
+      (insert (replace-regexp-in-string "\\\\n" "
+" (gethash key pattern-data)))
       ;(insert (concat ";;" key))
       (save-excursion
         (indent-region (point-min) (point-max) nil))
