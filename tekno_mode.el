@@ -10,6 +10,7 @@
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
 (setq pattern-queue-rm '())
+(setq pattern-print-list '())
 (setq techno-patterns nil)
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -213,7 +214,40 @@
      (clomacs-get-session (cider-current-connection)))
   )
 
+(defun add-pattern-print (&optional key)
+  (interactive)
+  (setq pattern-print-list
+        (cons (if key key
+                  (ctbl:cp-get-selected-data-cell techno-patterns))
+              pattern-print-list))
+  (update-pattern-view)
+  )
 
+
+(defun clear-pattern-print ()
+  (interactive)
+  (setq pattern-print-list '())
+  (update-pattern-view)
+  )
+
+(defun pattern-print-add-all ()
+  (interactive)
+  (cl-loop for k being the hash-keys of pattern-data
+           do
+           (add-pattern-print k)
+           )
+  (update-pattern-view)
+  )
+
+(defun rm-pattern-print (&optional key)
+  (interactive)
+  (let* ((key (if key key
+                  (ctbl:cp-get-selected-data-cell techno-patterns))))
+    (if (member key pattern-print-list)
+        (setq pattern-print-list (delete key pattern-print-list)))
+    (update-pattern-view)
+    )
+  )
 
 (defun add-pattern ()
   (interactive)
@@ -358,6 +392,10 @@
 
                                     ([mouse-1] . ctbl:navi-on-click)
                                     ("C-m" . ctbl:navi-on-click)
+                                    ("C-p" . add-pattern-print)
+                                    ("M-p" . rm-pattern-print)
+                                    ("C-M-r" . clear-pattern-print)
+                                    ("C-M-p" . pattern-print-add-all)
                                     ))
                      :param param))
          )
@@ -380,6 +418,8 @@
       (insert "\n\n\n")
       (insert (format "Queue Add: %s \n" pattern-queue-add))
       (insert (format "Queue Rm: %s \n" pattern-queue-rm))
+      (insert "\n\n")
+      (insert "Showing: " (format "%s" pattern-print-list))
       (goto-char p)
       (read-only-mode t)
       )
