@@ -216,11 +216,10 @@
 
 (defun add-pattern-print (&optional key)
   (interactive)
-  (setq pattern-print-list
-        (cons (if key key
-                  (ctbl:cp-get-selected-data-cell techno-patterns))
-              pattern-print-list))
-  (update-pattern-view)
+  (let* ((key (if key key (ctbl:cp-get-selected-data-cell techno-patterns))))
+    (setq pattern-print-list
+          (if (member key pattern-print-list) pattern-print-list (cons key pattern-print-list)))
+    (update-pattern-view))
   )
 
 
@@ -239,6 +238,17 @@
   (update-pattern-view)
   )
 
+(defun pattern-print-add-playing ()
+  (interactive)
+  (setq pattern-print-list '())
+  (dolist (p (get-patterns))
+    ;; (with-output-to-temp-buffer "*scratch*"
+    ;;   (print p))
+    (add-pattern-print (format "%s" p))
+    )
+  (update-pattern-view)
+  )
+
 (defun rm-pattern-print (&optional key)
   (interactive)
   (let* ((key (if key key
@@ -252,6 +262,34 @@
 (defun add-pattern ()
   (interactive)
   (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns))
+  )
+
+(defun get-pattern-struct (&optional keys)
+  (let* ((keys (if keys keys pattern-print-list))
+         (patterns (mapconcat
+                    (function (lambda (p)
+                                (gethash p pattern-data)))
+                    keys
+                    ""))
+         (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
+        '[overtone.inst.synth]
+        '[techno.core :as core]
+        '[techno.synths]
+        '[techno.drum-patterns]
+        '[techno.drums]
+        '[techno.samples]
+        '[techno.melody])
+         (require '[techno.sequencer :as s])
+         (core/get-merged-str " patterns ")"))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection)))
+              ))
+    (if (member "out" res)
+        (car (nthcdr (+ 1 (cl-position "out" res :test 'equal)) res))
+      "")
+    )
   )
 
 (defun add-pattern-key (key)
@@ -281,7 +319,9 @@
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns)))
     (puthash current-pattern (with-current-buffer
                        (get-buffer "tekno-pattern")
-                     (buffer-string)) pattern-data)
+                       (buffer-string)) pattern-data)
+    (cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
+    (update-pattern-view)
     )
   )
 (defun dec-amp ()
@@ -395,7 +435,7 @@
                                     ("C-p" . add-pattern-print)
                                     ("M-p" . rm-pattern-print)
                                     ("C-M-r" . clear-pattern-print)
-                                    ("C-M-p" . pattern-print-add-all)
+                                    ("C-M-p" . pattern-print-add-playing)
                                     ))
                      :param param))
          )
@@ -419,7 +459,8 @@
       (insert (format "Queue Add: %s \n" pattern-queue-add))
       (insert (format "Queue Rm: %s \n" pattern-queue-rm))
       (insert "\n\n")
-      (insert "Showing: " (format "%s" pattern-print-list))
+      (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
+      (insert (get-pattern-struct))
       (goto-char p)
       (read-only-mode t)
       )
