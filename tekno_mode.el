@@ -219,7 +219,9 @@
   (let* ((key (if key key (ctbl:cp-get-selected-data-cell techno-patterns))))
     (setq pattern-print-list
           (if (member key pattern-print-list) pattern-print-list (cons key pattern-print-list)))
-    (update-pattern-view))
+    (update-pattern-view)
+    (show-pattern-struct)
+    )
   )
 
 
@@ -227,6 +229,7 @@
   (interactive)
   (setq pattern-print-list '())
   (update-pattern-view)
+  (show-pattern-struct)
   )
 
 (defun pattern-print-add-all ()
@@ -236,6 +239,7 @@
            (add-pattern-print k)
            )
   (update-pattern-view)
+  (show-pattern-struct)
   )
 
 (defun pattern-print-add-playing ()
@@ -247,6 +251,7 @@
     (add-pattern-print (format "%s" p))
     )
   (update-pattern-view)
+  (show-pattern-struct)
   )
 
 (defun rm-pattern-print (&optional key)
@@ -322,6 +327,7 @@
                        (buffer-string)) pattern-data)
     (cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
     (update-pattern-view)
+    (show-pattern-struct)
     )
   )
 (defun dec-amp ()
@@ -360,6 +366,21 @@
   (save-pattern)
   (add-pattern-key current-pattern)
   )
+
+(defun show-pattern-struct ()
+  (interactive)
+  (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
+         (buf (get-buffer-create "tekno-pattern-struct")))
+    (with-current-buffer buf
+      (funcall 'clojure-mode)
+      (erase-buffer)
+      (insert (get-pattern-struct))
+      (save-excursion
+        (indent-region (point-min) (point-max) nil)))
+    ;(switch-to-buffer-other-window buf)
+    )
+  )
+
 (defun show-pattern-view ()
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
@@ -373,7 +394,12 @@
       (save-excursion
         (indent-region (point-min) (point-max) nil))
       (local-set-key (kbd "C-x C-z") 'save-pattern)
-      (local-set-key (kbd "C-x C-a") 'save-add-pattern))
+      (local-set-key (kbd "C-x C-a") 'save-add-pattern)
+      (local-set-key (kbd "C-p") 'add-pattern-print)
+      (local-set-key (kbd "M-p") 'rm-pattern-print)
+      (local-set-key (kbd "C-M-r") 'clear-pattern-print)
+      (local-set-key (kbd "C-M-p") 'pattern-print-add-playing)
+      )
     (setq current-pattern key)
     (switch-to-buffer-other-window buf)
     )
@@ -460,7 +486,7 @@
       (insert (format "Queue Rm: %s \n" pattern-queue-rm))
       (insert "\n\n")
       (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
-      (insert (get-pattern-struct))
+      ;(insert (get-pattern-struct))
       (goto-char p)
       (read-only-mode t)
       )
