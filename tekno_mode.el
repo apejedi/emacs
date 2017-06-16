@@ -182,6 +182,8 @@
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
   )
+
+
 (defun set-player-sp ()
   (interactive)
   (let ((sp (read-string "Speed: ")))
@@ -493,26 +495,80 @@
     )
   )
 
+(defun quantize-recorded-pattern ()
+  (interactive)
+  (kill-new
+        (let* ((res (nrepl-sync-request:eval
+                  (concat "(ns techno.core
+  ) (get-pattern-str (techno.recorder/quantize-time-pattern))")
+                  (cider-current-connection)
+                  (clomacs-get-session (cider-current-connection))))
+               (str (if (member "value" res)
+                        (car (nthcdr (+ 1 (cl-position "value" res :test 'equal)) res))
+                      "nothing loaded"))
+               (str (replace-regexp-in-string "^nil" ""
+                                   (replace-regexp-in-string "\\\\n" "
+"
+                                                             (replace-regexp-in-string "\"" "" str))))
+               )
+          str
+
+          ))
+  )
+
+(defun record-pattern ()
+  (interactive)
+  (nrepl-sync-request:eval
+   (concat "(ns techno.recorder
+  ) (start-record-pattern)")
+   (cider-current-connection)
+   (clomacs-get-session (cider-current-connection)))
+  )
+
+(defun stop-record-pattern ()
+  (interactive)
+  (nrepl-sync-request:eval
+   (concat "(ns techno.recorder
+  ) (stop-record-pattern)")
+   (cider-current-connection)
+   (clomacs-get-session (cider-current-connection)))
+  )
+
+(defun play-recorded-pattern ()
+  (interactive)
+  (nrepl-sync-request:eval
+   (concat "(ns techno.recorder
+  ) (play-time-pattern)")
+   (cider-current-connection)
+   (clomacs-get-session (cider-current-connection)))
+  )
+
+
 (defun new-pattern (&optional type)
   (interactive)
-  (let ((type (read-string "Type: ")))
-      (cond ((string= type "phrase")
-             (puthash (concat ":phrase" (format "%s" (tekno:uid)))
-                      "(let []
-     (s/phrase-p
-      bass-synth
-      []
-      0.25 1 [:attack 0.1 :release 0.3])
-    )" pattern-data))
-            ((string= type "drum")
-             (puthash (concat ":drum" (format "%s" (tekno:uid)))
-                      "(let []
-     (drum-p
-      [:Kit4-Electro]
-      [])
-    )" pattern-data))
-            (t (puthash (concat ":pattern" (format "%s" (tekno:uid)))
+  (let (;(type (read-string "Type: "))
+        (name (read-string "Name: ")))
+    (puthash name
                         "(let []
-    )" pattern-data))))
+    )" pattern-data)
+      ;; (cond ((string= type "phrase")
+    ;;          (puthash (concat name)
+    ;;                   "(let []
+    ;;  (s/phrase-p
+    ;;   bass-synth
+    ;;   []
+    ;;   0.25 1 [:attack 0.1 :release 0.3])
+    ;; )" pattern-data))
+    ;;         ((string= type "drum")
+    ;;          (puthash (concat name)
+    ;;                   "(let []
+    ;;  (drum-p
+    ;;   [:Kit4-Electro]
+    ;;   [])
+    ;; )" pattern-data))
+    ;;         (t (puthash (concat ":pattern" (format "%s" (tekno:uid)))
+    ;;                     "(let []
+    ;; )" pattern-data)))
+      )
   (update-pattern-view)
   )
