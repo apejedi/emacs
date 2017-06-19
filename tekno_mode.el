@@ -547,7 +547,7 @@
 (defun new-pattern (&optional type)
   (interactive)
   (let (;(type (read-string "Type: "))
-        (name (read-string "Name: ")))
+        (name (concat ":" (read-string "Name: "))))
     (puthash name
                         "(let []
     )" pattern-data)
