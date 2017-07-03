@@ -6,6 +6,7 @@
 (clomacs-defun get-patterns-from-string techno.core/get-patterns-from-string :return-type :list)
 
 (clomacs-defun get-pattern-str techno.core/get-pattern-str)
+(clomacs-defun get-pattern-fx techno.core/get-pattern-fx)
 
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
@@ -179,6 +180,32 @@
       (def player (s/get-s
                    (/ 80 60)
                    )))"
+     (cider-current-connection)
+     (clomacs-get-session (cider-current-connection)))
+  )
+
+(defun start-midi-player ()
+  (interactive)
+  (nrepl-sync-request:eval
+   "(ns techno.core
+  (:use [overtone.core]
+        )
+  (:require [techno.sequencer :as s]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.tools.reader.reader-types :as readers]
+            [clojure.string :as string]))
+(if (or (nil? player) (not (node-active? player)))
+    (let [midi-bus (control-bus)]
+      (on-event
+       [:midi nil]
+       (fn [m]
+          (when (= (:status m) :timing-clock)
+            (control-bus-set! midi-bus 1)
+            )
+          )
+       :midi-clock)
+      (def player (s/midi-s midi-bus)))
+  )"
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
   )
@@ -488,6 +515,9 @@
       (insert (format "Queue Rm: %s \n" pattern-queue-rm))
       (insert "\n\n")
       (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
+
+      ;; (insert "FX: \n" (replace-regexp-in-string "\\\\n" "
+;; " (get-pattern-fx (ctbl:cp-get-selected-data-cell techno-patterns))) "\n\n")
       ;(insert (get-pattern-struct))
       (goto-char p)
       (read-only-mode t)
@@ -551,24 +581,6 @@
     (puthash name
                         "(let []
     )" pattern-data)
-      ;; (cond ((string= type "phrase")
-    ;;          (puthash (concat name)
-    ;;                   "(let []
-    ;;  (s/phrase-p
-    ;;   bass-synth
-    ;;   []
-    ;;   0.25 1 [:attack 0.1 :release 0.3])
-    ;; )" pattern-data))
-    ;;         ((string= type "drum")
-    ;;          (puthash (concat name)
-    ;;                   "(let []
-    ;;  (drum-p
-    ;;   [:Kit4-Electro]
-    ;;   [])
-    ;; )" pattern-data))
-    ;;         (t (puthash (concat ":pattern" (format "%s" (tekno:uid)))
-    ;;                     "(let []
-    ;; )" pattern-data)))
-      )
   (update-pattern-view)
+  )
   )
