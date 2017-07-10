@@ -79,14 +79,17 @@
 
 (defun refresh-patterns ()
   (interactive)
-  (let* ((s (read-string "type: "))
+  (let* ((key (read-string "pattern: "))
+         (s (read-string "type: "))
          (table (if pattern-data pattern-data (make-hash-table :test 'equal))))
     (dolist (p (get-patterns))
-      (puthash (symbol-name p) (get-pattern-str p s) table)
+      (if (or (string= key (symbol-name p)) (string= key ":all"))
+          (puthash (symbol-name p) (get-pattern-str p s) table))
       )
     (setq pattern-data table)
     (update-pattern-view))
   )
+
 
 ;; (load-patterns-from-buffer "sketches.clj" "track2")
 ;; (update-pattern-view)
@@ -583,4 +586,16 @@
     )" pattern-data)
   (update-pattern-view)
   )
+  )
+
+(defun export-queued ()
+  (interactive)
+  (kill-new
+   (concat "(def sketch {
+ "  (apply 'concat (loop for k in pattern-queue-add
+                         collect (concat k (gethash k pattern-data) "
+")))
+ "
+})")
+   )
   )
