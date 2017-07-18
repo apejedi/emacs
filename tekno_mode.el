@@ -591,9 +591,9 @@
 (defun export-queued ()
   (interactive)
   (kill-new
-   (concat "(def sketch {
- "  (apply 'concat (loop for k in pattern-queue-add
-                         collect (concat k (gethash k pattern-data) "
+   (concat "(def sketch
+{"  (apply 'concat (loop for k in pattern-queue-add
+                         collect (concat k " "(gethash k pattern-data) "
 ")))
  "
 })")
