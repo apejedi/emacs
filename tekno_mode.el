@@ -171,6 +171,64 @@
 
 (defun start-player ()
   (interactive)
+  (let ((res (nrepl-sync-request:eval
+           "(ns techno.core
+  (:use [overtone.core]
+        )
+  (:require [techno.sequencer :as s]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.tools.reader.reader-types :as readers]
+            [clojure.string :as string]))
+(if (or (nil? player) (not (node-active? player)))
+    (let [p (s/get-s
+             (/ 80 60)
+             )]
+      (def player p)
+      ))
+(let [started (atom false)
+              counter (atom 0)
+              beat (atom 1)]
+  (on-event
+   [:midi nil]
+   (fn [m]
+      (when (and (not @started)
+                 (= (:status m) :start))
+        ;(println \"syncing\")
+        (s/reset-s player)
+        ;(reset! started true)
+        )
+      (when (= (:status m) :stop)
+          ;(println \"stopping\")
+          ;(reset! started false)
+          )
+      ) :midi-clock))
+"
+            (cider-current-connection)
+            (clomacs-get-session (cider-current-connection)))))
+    ;; (with-output-to-temp-buffer "*scratch*"
+    ;;   (print res))
+(add-dummy-p)
+)
+  )
+
+(defun add-dummy-p ()
+  (nrepl-sync-request:eval
+           "(ns techno.core
+  (:use [overtone.core]
+        )
+  (:require [techno.sequencer :as s]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.tools.reader.reader-types :as readers]
+            [clojure.string :as string]))
+  (s/add-p player {1.75 [nil []]} :sync {:no-group true})
+
+"
+            (cider-current-connection)
+            (clomacs-get-session (cider-current-connection)))
+  )
+
+(defun start-midi-player2 ()
+  (interactive)
   (nrepl-sync-request:eval
    "(ns techno.core
   (:use [overtone.core]
@@ -180,9 +238,10 @@
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
 (if (or (nil? player) (not (node-active? player)))
-      (def player (s/get-s
-                   (/ 80 60)
-                   )))"
+    (let [bus (control-bus)
+          active (atom false)]
+      (def player (s/midi-s bus)))
+  )"
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
   )
@@ -198,21 +257,28 @@
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
 (if (or (nil? player) (not (node-active? player)))
-    (let [midi-bus (control-bus)]
+    (let [bus (control-bus)
+          active (atom false)]
       (on-event
        [:midi nil]
        (fn [m]
-          (when (= (:status m) :timing-clock)
-            (control-bus-set! midi-bus 1)
-            )
-          )
+           (when (.contains (name (:status m)) \"start\")
+             (reset! active true))
+           (when (and (= (:status m) :timing-clock))
+             (control-bus-set! bus 1)
+             )
+           )
        :midi-clock)
-      (def player (s/midi-s midi-bus)))
+      (def player (s/midi-s bus)))
   )"
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
   )
 
+(defun sync-to-midi ()
+  (interactive)
+
+  )
 
 (defun set-player-sp ()
   (interactive)
@@ -301,6 +367,11 @@
   (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns))
   )
 
+(defun queue-add-pattern ()
+  (interactive)
+  (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns) t)
+  )
+
 (defun get-pattern-struct (&optional keys)
   (let* ((keys (if keys keys pattern-print-list))
          (patterns (mapconcat
@@ -329,10 +400,10 @@
     )
   )
 
-(defun add-pattern-key (key)
+(defun add-pattern-key (key &optional add-at-1)
   (let* ((pattern (gethash key pattern-data))
+         (attrs (if add-at-1 "{:wrap true :add-at-1 true}" ""))
          (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
-        '[overtone.inst.synth]
         '[techno.core :as core]
         '[techno.synths]
         '[techno.drum-patterns]
@@ -340,13 +411,13 @@
         '[techno.samples]
         '[techno.melody])
          (require '[techno.sequencer :as s])
-         (s/add-p core/player " pattern " " key ")")))
+         (s/add-p core/player " pattern " " key " " attrs ")"))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection)))))
     ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print body))
-    (nrepl-sync-request:eval
-     body
-     (cider-current-connection)
-     (clomacs-get-session (cider-current-connection)))
+    ;;   (print res))
       (update-pattern-view))
   )
 
@@ -475,6 +546,7 @@
                                     ("d" . ctbl:navi-move-right)
                                     ("c" . ctbl:navi-jump-to-column)
                                     ("M-a" . add-pattern)
+                                    ("M-q" . queue-add-pattern)
                                     ("C-M-a" . pattern-add-q)
                                     ("M-r" . rm-pattern)
                                     ("C-M-x" . pattern-rm-q)
@@ -482,6 +554,8 @@
                                     ("C-M-u" . update-pattern-view)
                                     ("C-M-<down>" . dec-amp)
                                     ("C-M-<up>" . inc-amp)
+                                    ("S-<down>" . dec-amp)
+                                    ("S-<up>" . inc-amp)
 
                                     ("C-e" . ctbl:navi-move-right-most)
                                     ("C-a" . ctbl:navi-move-left-most)
