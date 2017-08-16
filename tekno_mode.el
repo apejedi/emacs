@@ -186,21 +186,28 @@
       (def player p)
       ))
 (let [started (atom false)
-              counter (atom 0)
-              beat (atom 1)]
+              stopped (atom false)]
   (on-event
    [:midi nil]
    (fn [m]
-      (when (and (not @started)
-                 (= (:status m) :start))
-        ;(println \"syncing\")
+       ;; (println (:status m))
+       ;; (when (= (:status m) :song-position-pointer)
+       ;;   (println \"pointer\"))
+      (when (and (not @stopped)
+                 ;; (= (:status m) :start)
+                 (= (:status m) :song-position-pointer)
+                 )
+        (println \"syncing\")
         (s/reset-s player)
-        ;(reset! started true)
+        (reset! started true)
         )
       (when (= (:status m) :stop)
-          ;(println \"stopping\")
-          ;(reset! started false)
+          (reset! stopped true)
           )
+      (when (and (= (:status m) :song-position-pointer) @stopped)
+                  (println \"stopping\")
+                  (reset! started false)
+                  (reset! stopped false))
       ) :midi-clock))
 "
             (cider-current-connection)
@@ -372,6 +379,11 @@
   (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns) t)
   )
 
+(defun add-pattern-mute ()
+  (interactive)
+  (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns) nil t)
+  )
+
 (defun get-pattern-struct (&optional keys)
   (let* ((keys (if keys keys pattern-print-list))
          (patterns (mapconcat
@@ -400,9 +412,12 @@
     )
   )
 
-(defun add-pattern-key (key &optional add-at-1)
+(defun add-pattern-key (key &optional add-at-1 mute)
   (let* ((pattern (gethash key pattern-data))
-         (attrs (if add-at-1 "{:wrap true :add-at-1 true}" ""))
+         (attrs "{:wrap true")
+         (attrs (if add-at-1 (concat attrs " :add-at-1 true ") attrs))
+         (attrs (if mute (concat attrs " :volume 0 ") attrs))
+         (attrs (concat attrs "}"))
          (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
         '[techno.core :as core]
         '[techno.synths]
@@ -547,6 +562,7 @@
                                     ("c" . ctbl:navi-jump-to-column)
                                     ("M-a" . add-pattern)
                                     ("M-q" . queue-add-pattern)
+                                    ("M-f" . add-pattern-mute)
                                     ("C-M-a" . pattern-add-q)
                                     ("M-r" . rm-pattern)
                                     ("C-M-x" . pattern-rm-q)
