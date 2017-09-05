@@ -13,6 +13,7 @@
 (setq pattern-queue-rm '())
 (setq pattern-print-list '())
 (setq techno-patterns nil)
+(setq use-player t)
 
 (set-face-foreground 'ctbl:face-row-select "white")
 (set-face-background 'ctbl:face-row-select "blue5")
@@ -28,6 +29,15 @@
   (incf tekno:uid))
 
 
+(defun use-player ()
+  (interactive)
+  (setq use-player t)
+  )
+
+(defun use-sequencer ()
+  (interactive)
+  (setq use-player nil)
+  )
 
 (defun ctbl:dest-ol-selection-set (dest cell-id)
   "[internal] Put a selection overlay on CELL-ID. The selection overlay can be
@@ -72,8 +82,9 @@
 
 (defun load-patterns ()
   (interactive)
-  (let* ((s (read-string "Sketch: ")))
-    (load-patterns-from-buffer "sketches.clj" s)
+  (let* ((s (read-string "Sketch: "))
+         (f (if use-player "sketches2.clj" "sketches.clj")))
+    (load-patterns-from-buffer f s)
     (update-pattern-view))
   )
 
@@ -171,20 +182,25 @@
 
 (defun start-player ()
   (interactive)
-  (let ((res (nrepl-sync-request:eval
-              "(ns techno.core
+  (let* ((init (if use-player " (if (not (contains? (p/scheduled-jobs) player))
+                     (def player (p/get-s 80 {:div 8})))"
+                "(if (or (nil? player) (not (node-active? player)))
+                    (let [p (s/get-s
+                      (/ 80 60)
+                      )]
+                    (def player p)
+                    ))"
+                ))
+        (res (nrepl-sync-request:eval
+              (concat "(ns techno.core
   (:use [overtone.core]
         )
   (:require [techno.sequencer :as s]
+            [techno.player :as p]
             [clojure.tools.reader.edn :as edn]
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
-(if (or (nil? player) (not (node-active? player)))
-    (let [p (s/get-s
-             (/ 80 60)
-             )]
-      (def player p)
-      ))
+" init "
 (def sync-to-midi (atom true))
 (let [started (atom false)
               stopped (atom false)]
@@ -199,7 +215,7 @@
                   (= (:status m) :song-position-pointer)
                   @sync-to-midi)
          (println \"syncing\")
-         ;(techno.synths/o-kick)
+         ;(techno.synths/o-kick)        ;
          (s/reset-s player)
          (reset! started true)
          )
@@ -211,7 +227,7 @@
          (reset! started false)
          (reset! stopped false))
        ) :midi-clock))
-"
+")
             (cider-current-connection)
             (clomacs-get-session (cider-current-connection)))))
     ;; (with-output-to-temp-buffer "*scratch*"
@@ -324,34 +340,42 @@
 
 (defun set-player-sp ()
   (interactive)
-  (let ((sp (read-string "Speed: ")))
-      (nrepl-sync-request:eval
-       (concat "(ns techno.core
+  (let* ((sp (read-string "Speed: "))
+         (p (if use-player "p/set-sp" "s/set-sp"))
+         (req (concat "(ns techno.core
   (:use [overtone.core]
         )
   (:require [techno.sequencer :as s]
+            [techno.player :as p]
             [clojure.tools.reader.edn :as edn]
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
-(if (and (not (nil? player)) (node-active? player))
-    (s/set-sp player (/ " sp " 60)))")
-     (cider-current-connection)
-     (clomacs-get-session (cider-current-connection))))
+(if " (if use-player " (p/active? player) " "(and (not (nil? player)) (node-active? player))") "
+    (" p " player " (if use-player sp (concat "(/ " sp " 60)")) "))"))
+         (res (nrepl-sync-request:eval
+           req
+            (cider-current-connection)
+            (clomacs-get-session (cider-current-connection)))))
+    ;; (with-output-to-temp-buffer "*scratch*"
+    ;;   (print req))
+
+)
   )
 
 (defun stop-player ()
   (interactive)
   (nrepl-sync-request:eval
-   "(ns techno.core
+   (concat "(ns techno.core
         (:use [overtone.core]
               )
         (:require [techno.sequencer :as s]
+                  [techno.player :as p]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
-(kill player)
+(" (if use-player "p/stop-s" "kill")" player)
 (remove-event-handler :midi-clock)
-"
+")
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
   )
@@ -436,13 +460,17 @@
         '[techno.drums]
         '[techno.samples]
         '[techno.melody])
-         (require '[techno.sequencer :as s])
+         (require '[techno.sequencer :as s]
+                   '[techno.sequencer :as p])
          (core/get-merged-str " patterns ")"))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection)))
               ))
+    ;; (with-output-to-temp-buffer "*scratch*"
+    ;;   (print body)
+    ;;   (print res))
     (if (member "out" res)
         (car (nthcdr (+ 1 (cl-position "out" res :test 'equal)) res))
       "")
@@ -455,6 +483,7 @@
          (attrs (if add-at-1 (concat attrs " :add-at-1 true ") attrs))
          (attrs (if mute (concat attrs " :volume 0 ") attrs))
          (attrs (concat attrs "}"))
+         (add-p (if use-player "p/add-p" "s/add-p"))
          (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
         '[techno.core :as core]
         '[techno.synths]
@@ -463,8 +492,9 @@
         '[techno.drums]
         '[techno.samples]
         '[techno.melody])
-         (require '[techno.sequencer :as s])
-         (s/add-p core/player " pattern " " key " " attrs ")"))
+         (require '[techno.sequencer :as s]
+                  '[techno.player :as p])
+         (" add-p " core/player " pattern " " key " " attrs ")"))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
@@ -492,7 +522,8 @@
 (defun dec-amp (&optional big)
     (interactive)
     (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns))
-           (delta (if big "-0.1" "-0.01")))
+           (delta (if big "-0.1" "-0.01"))
+           (mod-amp (if use-player "p/mod-amp" "s/mod-amp")))
     (nrepl-sync-request:eval
      (concat "(ns techno.core
         (:use [overtone.core]
@@ -501,7 +532,7 @@
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
-(s/mod-amp player " pattern " "  delta  ")")
+(" mod-amp " player " pattern " "  delta  ")")
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection))))
  )
@@ -509,7 +540,8 @@
 (defun inc-amp (&optional big)
     (interactive)
     (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns))
-           (delta (if big "0.1" "0.01")))
+           (delta (if big "0.1" "0.01"))
+           (mod-amp (if use-player "p/mod-amp" "s/mod-amp")))
     (nrepl-sync-request:eval
      (concat "(ns techno.core
         (:use [overtone.core]
@@ -518,7 +550,7 @@
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
                   [clojure.string :as string]))
-(s/mod-amp player " pattern " " delta ")")
+(" mod-amp " player " pattern " " delta ")")
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection))))
  )
@@ -537,6 +569,7 @@
          (buf (get-buffer-create "tekno-pattern-struct")))
     (with-current-buffer buf
       (funcall 'clojure-mode)
+      (funcall 'toggle-truncate-lines nil)
       (erase-buffer)
       (insert (get-pattern-struct))
       (save-excursion
@@ -575,12 +608,13 @@
   )
 (defun rm-pattern-key (key)
   (interactive)
-  (let* ()
+  (let* ((rm-p (if use-player "p/rm-p" "s/rm-p")) )
     (nrepl-sync-request:eval
      (concat "(use
         '[techno.core :as core]
         '[techno.sequencer :as s]
-        ) (s/rm-p core/player " key ")")
+        '[techno.player :as p]
+        ) (" rm-p " core/player " key ")")
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
       (update-pattern-view))
@@ -614,8 +648,8 @@
                                     ("C-M-x" . pattern-rm-q)
                                     ("C-M-g" . pattern-flush-q)
                                     ("C-M-u" . update-pattern-view)
-                                    ("C-M-<down>" . dec-amp-big)
-                                    ("C-M-<up>" . inc-amp-big)
+                                    ("M-<down>" . dec-amp-big)
+                                    ("M-<up>" . inc-amp-big)
                                     ("S-<down>" . dec-amp)
                                     ("S-<up>" . inc-amp)
 
@@ -667,9 +701,10 @@
 (defun quantize-recorded-pattern ()
   (interactive)
   (kill-new
-        (let* ((res (nrepl-sync-request:eval
+   (let* ((quant (if use-player "mk-map-p" "quantize-time-pattern"))
+          (res (nrepl-sync-request:eval
                   (concat "(ns techno.core
-  ) (get-pattern-str (techno.recorder/quantize-time-pattern))")
+  ) (get-pattern-str (techno.recorder/" quant "))")
                   (cider-current-connection)
                   (clomacs-get-session (cider-current-connection))))
                (str (if (member "value" res)
