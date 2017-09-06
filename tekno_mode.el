@@ -72,7 +72,7 @@
          (data (get-patterns-from-string contents sketch))
          (table (make-hash-table :test 'equal)))
     ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print contents))
+    ;;   (print data))
     (dolist (el data)
       (puthash (car el) (car (cdr el)) table)
       )
@@ -514,6 +514,9 @@
     (cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
     (update-pattern-view)
     (show-pattern-struct)
+    (with-current-buffer
+        (get-buffer "tekno-pattern")
+      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|"))
     )
   )
 
@@ -590,6 +593,7 @@
       ;(insert (concat ";;" key))
       (save-excursion
         (indent-region (point-min) (point-max) nil))
+      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
       (local-set-key (kbd "C-x C-z") 'save-pattern)
       (local-set-key (kbd "C-x C-a") 'save-add-pattern)
       (local-set-key (kbd "C-p") 'add-pattern-print)
