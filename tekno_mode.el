@@ -586,10 +586,10 @@
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
          (buf (get-buffer-create "tekno-pattern")))
     (with-current-buffer buf
-      (funcall 'clojure-mode)
       (erase-buffer)
       (insert (replace-regexp-in-string "\\\\n" "
 " (gethash key pattern-data)))
+      (funcall 'clojure-mode)
       ;(insert (concat ";;" key))
       (save-excursion
         (indent-region (point-min) (point-max) nil))
@@ -750,6 +750,25 @@
    (cider-current-connection)
    (clomacs-get-session (cider-current-connection)))
   )
+
+
+(defun rename-pattern ()
+  (interactive)
+  (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
+         (to (read-string "To: ")))
+    (puthash to
+             (gethash key pattern-data) pattern-data)
+    (remhash key pattern-data)
+    (if (member (intern key) (get-patterns))
+        (progn
+            (rm-pattern-key key)
+            (add-pattern-key to)))
+    (update-pattern-view)
+    )
+  )
+
+    (with-output-to-temp-buffer "*scratch*"
+      (print (member (symbol ":kick") (get-patterns))))
 
 
 (defun new-pattern (&optional type)
