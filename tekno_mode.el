@@ -767,8 +767,6 @@
     )
   )
 
-    (with-output-to-temp-buffer "*scratch*"
-      (print (member (symbol ":kick") (get-patterns))))
 
 
 (defun new-pattern (&optional type)
