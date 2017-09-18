@@ -499,18 +499,19 @@
                body
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection)))))
-    ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print res))
+    ;; (if t
+    ;;     (with-output-to-temp-buffer "*scratch*"
+    ;;       (print res)))
       (update-pattern-view))
   )
-
 
 (defun save-pattern ()
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns)))
     (puthash current-pattern (with-current-buffer
                        (get-buffer "tekno-pattern")
-                       (buffer-string)) pattern-data)
+                       (replace-regexp-in-string "^[ \n]*" "" (buffer-string))
+                       ) pattern-data)
     (cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
     (update-pattern-view)
     (show-pattern-struct)
@@ -528,7 +529,7 @@
            (delta (if big "-0.1" "-0.01"))
            (mod-amp (if use-player "p/mod-amp" "s/mod-amp")))
     (nrepl-sync-request:eval
-     (concat "(ns techno.core
+             (concat "(ns techno.core
         (:use [overtone.core]
               )
         (:require [techno.sequencer :as s]
@@ -537,7 +538,8 @@
                   [clojure.string :as string]))
 (" mod-amp " player " pattern " "  delta  ")")
      (cider-current-connection)
-     (clomacs-get-session (cider-current-connection))))
+     (clomacs-get-session (cider-current-connection)))
+)
  )
 
 (defun inc-amp (&optional big)
