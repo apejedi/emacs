@@ -14,6 +14,7 @@
 (setq pattern-print-list '())
 (setq techno-patterns nil)
 (setq use-player t)
+(setq tempo "80")
 
 (set-face-foreground 'ctbl:face-row-select "white")
 (set-face-background 'ctbl:face-row-select "blue5")
@@ -72,9 +73,12 @@
          (data (get-patterns-from-string contents sketch))
          (table (make-hash-table :test 'equal)))
     ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print data))
+    ;;   (print (car el)))
+    (setq tempo "80")
     (dolist (el data)
-      (puthash (car el) (car (cdr el)) table)
+      (if (not (string= (car el) ":tempo"))
+          (puthash (car el) (car (cdr el)) table)
+        (setq tempo (car (cdr el))))
       )
     (setq pattern-data table))
   )
@@ -85,6 +89,7 @@
   (let* ((s (read-string "Sketch: "))
          (f (if use-player "sketches2.clj" "sketches.clj")))
     (load-patterns-from-buffer f s)
+    (start-player tempo)
     (update-pattern-view))
   )
 
@@ -180,10 +185,11 @@
   )
 
 
-(defun start-player ()
+(defun start-player (&optional tempo)
   (interactive)
-  (let* ((init (if use-player " (if (not (contains? (p/scheduled-jobs) player))
+  (let* ((init (if use-player (concat " (if (not (contains? (p/scheduled-jobs) player))
                      (def player (p/get-s 80 {:div 8})))"
+                                      (if tempo (concat " (p/set-sp player " tempo ")") ""))
                 "(if (or (nil? player) (not (node-active? player)))
                     (let [p (s/get-s
                       (/ 80 60)
@@ -512,12 +518,13 @@
                        (get-buffer "tekno-pattern")
                        (replace-regexp-in-string "^[ \n]*" "" (buffer-string))
                        ) pattern-data)
-    (cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
+    ;(cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
     (update-pattern-view)
     (show-pattern-struct)
     (with-current-buffer
         (get-buffer "tekno-pattern")
-      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|"))
+      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
+      )
     )
   )
 
