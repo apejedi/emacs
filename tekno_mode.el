@@ -7,6 +7,7 @@
 
 (clomacs-defun get-pattern-str techno.core/get-pattern-str)
 (clomacs-defun get-pattern-fx techno.core/get-pattern-fx)
+(clomacs-defun player-active? techno.core/player-active?)
 
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
@@ -89,7 +90,7 @@
   (let* ((s (read-string "Sketch: "))
          (f (if use-player "sketches2.clj" "sketches.clj")))
     (load-patterns-from-buffer f s)
-    (start-player tempo)
+    (start-player)
     (update-pattern-view))
   )
 
@@ -184,8 +185,16 @@
     model)
   )
 
+(defun set-tempo ()
+  (interactive)
+  (let* ((te (read-string "bpm: ")))
+    (setq tempo te)
+    )
+  (update-pattern-view)
+  )
 
-(defun start-player (&optional tempo)
+
+(defun start-player ()
   (interactive)
   (let* ((init (if use-player (concat " (if (not (contains? (p/scheduled-jobs) player))
                      (def player (p/get-s 80 {:div 8})))"
@@ -239,8 +248,43 @@
     ;; (with-output-to-temp-buffer "*scratch*"
     ;;   (print res))
 (add-dummy-p)
+(update-pattern-view)
 )
 )
+
+(defun start-stop-player ()
+  (interactive)
+  (if (string= "true" (player-active?))
+      (stop-player)
+    (start-player))
+  )
+(defun play-pattern ()
+  (interactive)
+  (let* ((pattern (with-current-buffer
+                       (get-buffer "tekno-pattern")
+                       (replace-regexp-in-string "^[ \n]*" "" (buffer-string))
+                       ))
+         (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
+        '[techno.core :as core]
+        '[techno.synths]
+        '[overtone.inst.synth]
+        '[techno.drum-patterns]
+        '[techno.drums]
+        '[techno.samples]
+        '[techno.melody])
+         (require '[techno.sequencer :as s]
+                  '[techno.player :as p])
+         (p/play-p " pattern " " (if tempo tempo "80") ")"))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection)))))
+    ;; (if t
+    ;;     (with-output-to-temp-buffer "*scratch*"
+    ;;       (print body)
+    ;;       (print res)))
+    )
+  )
 
 (defun sync-to-midi ()
   (interactive)
@@ -384,6 +428,7 @@
 ")
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
+(update-pattern-view)
   )
 
 (defun add-pattern-print (&optional key)
@@ -606,9 +651,10 @@
       (local-set-key (kbd "C-x C-z") 'save-pattern)
       (local-set-key (kbd "C-x C-a") 'save-add-pattern)
       (local-set-key (kbd "C-p") 'add-pattern-print)
-      (local-set-key (kbd "M-p") 'rm-pattern-print)
+      (local-set-key (kbd "M-p") 'play-pattern)
       (local-set-key (kbd "C-M-r") 'clear-pattern-print)
       (local-set-key (kbd "C-M-p") 'pattern-print-add-playing)
+      (local-set-key (kbd "C-=") 'start-stop-player)
       )
     (setq current-pattern key)
     (switch-to-buffer-other-window buf)
@@ -677,6 +723,7 @@
                                     ("M-p" . rm-pattern-print)
                                     ("C-M-r" . clear-pattern-print)
                                     ("C-M-p" . pattern-print-add-playing)
+                                    ("C-=" . start-stop-player)
                                     ))
                      :param param))
          )
@@ -699,6 +746,8 @@
       (insert "\n\n\n")
       (insert (format "Queue Add: %s \n" pattern-queue-add))
       (insert (format "Queue Rm: %s \n" pattern-queue-rm))
+      (insert (format "Tempo: %s \n" tempo))
+      (insert (format "Player Active: %s \n" (player-active?)))
       (insert "\n\n")
       (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
 
