@@ -15,6 +15,7 @@
 (setq pattern-print-list '())
 (setq techno-patterns nil)
 (setq use-player t)
+(setq pattern-sizes (make-hash-table :test 'equal))
 (setq tempo "80")
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -78,7 +79,8 @@
     (setq tempo "80")
     (dolist (el data)
       (if (not (string= (car el) ":tempo"))
-          (puthash (car el) (car (cdr el)) table)
+          (progn (puthash (car el) (car (cdr el)) table)
+                 (get-pattern-size (car (cdr el)) (car el)))
         (setq tempo (car (cdr el))))
       )
     (setq pattern-data table))
@@ -260,6 +262,7 @@
   )
 (defun play-pattern ()
   (interactive)
+  (save-pattern)
   (let* ((pattern (with-current-buffer
                        (get-buffer "tekno-pattern")
                        (replace-regexp-in-string "^[ \n]*" "" (buffer-string))
@@ -563,6 +566,7 @@
                        (get-buffer "tekno-pattern")
                        (replace-regexp-in-string "^[ \n]*" "" (buffer-string))
                        ) pattern-data)
+    (get-pattern-size (gethash current-pattern pattern-data) current-pattern)
     ;(cider--display-interactive-eval-result (get-pattern-struct (cons current-pattern '())))
     (update-pattern-view)
     (show-pattern-struct)
@@ -728,6 +732,7 @@
                      :param param))
          )
     (setq techno-patterns component)
+    (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
     (pop-to-buffer (ctbl:cp-get-buffer component))
     (goto-line 3)
     (forward-char 1)
@@ -740,23 +745,7 @@
       (setq current-playing-patterns (get-patterns))
     (ctbl:cp-set-model techno-patterns (build-pattern-model))
                                         ;(pop-to-buffer (ctbl:cp-get-buffer techno-patterns))
-    (with-current-buffer (ctbl:cp-get-buffer techno-patterns)
-      (end-of-buffer)
-      (read-only-mode -1)
-      (insert "\n\n\n")
-      (insert (format "Queue Add: %s \n" pattern-queue-add))
-      (insert (format "Queue Rm: %s \n" pattern-queue-rm))
-      (insert (format "Tempo: %s \n" tempo))
-      (insert (format "Player Active: %s \n" (player-active?)))
-      (insert "\n\n")
-      (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
-
-      ;; (insert "FX: \n" (replace-regexp-in-string "\\\\n" "
-;; " (get-pattern-fx (ctbl:cp-get-selected-data-cell techno-patterns))) "\n\n")
-      ;(insert (get-pattern-struct))
-      (goto-char p)
-      (read-only-mode t)
-      )
+    (display-pattern-info)
     )
   )
 
@@ -848,4 +837,55 @@
  "
 })")
    )
+  )
+
+(defun display-pattern-info ()
+  (interactive)
+  (let*
+      ((key (ctbl:cp-get-selected-data-cell techno-patterns))
+       (pattern (gethash key pattern-data))
+
+)
+      (with-current-buffer (ctbl:cp-get-buffer techno-patterns)
+        (end-of-buffer)
+        (read-only-mode -1)
+        (insert "\n\n\n")
+        (insert (format "Queue Add: %s \n" pattern-queue-add))
+        (insert (format "Queue Rm: %s \n" pattern-queue-rm))
+        (insert (format "Tempo: %s \n" tempo))
+        (insert (format "Player Active: %s \n" (player-active?)))
+        (insert "\n\n")
+        (insert (format "Pattern: %s %s" key (gethash key pattern-sizes)))
+        (insert "\n\n")
+        (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
+
+        ;; (insert "FX: \n" (replace-regexp-in-string "\\\\n" "
+        ;; " (get-pattern-fx (ctbl:cp-get-selected-data-cell techno-patterns))) "\n\n")
+                                        ;(insert (get-pattern-struct))
+        (goto-char p)
+        (read-only-mode t)
+        ))
+  )
+
+(defun get-pattern-size (pattern &optional key)
+  (let* ((body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
+        '[techno.core :as core]
+        '[techno.synths]
+        '[overtone.inst.synth]
+        '[techno.drum-patterns]
+        '[techno.drums]
+        '[techno.samples]
+        '[techno.melody])
+         (require '[techno.sequencer :as s]
+                  '[techno.player :as p])
+         (let [data " pattern "] (print (p/get-pos
+(p/p-size data) (:div data))))"))
+       (res (nrepl-dict-get (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))) "out")))
+(if key (puthash key res pattern-sizes))
+res
+)
+
   )

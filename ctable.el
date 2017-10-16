@@ -648,10 +648,14 @@ HOOK is a function that has no argument."
          (min (ctbl:dest-point-min dest))
          (max (ctbl:dest-point-max dest))
          (mid (/ (+ min max) 2)))
+    ;; (with-current-buffer (get-buffer "*scratch*")
+    ;;   (insert (format "init %s %s %s \n\n" min max cell-id)))
     (save-excursion
       (loop for next = (next-single-property-change mid 'ctbl:cell-id nil max)
             for cur-row-id = (and next (car (ctbl:cursor-to-cell next)))
             do
+            ;; (with-current-buffer (get-buffer "*scratch*")
+            ;;   (insert (format "min %s max %s cell-id %s cur-row-id %s\n\n" min max cell-id cur-row-id)))
             (cond
              ((>= next max) (return (point)))
              ((null cur-row-id) (setq mid next))
@@ -672,7 +676,8 @@ HOOK is a function that has no argument."
   "[internal] Return a point where the text property `ctbl:cell-id'
 is equal to cell-id in the current table view. If CELL-ID is not
 found in the current view, return nil."
-  (loop with pos = (ctbl:find-position-fast dest cell-id)
+  (loop ;with pos = (ctbl:find-position-fast dest cell-id)
+   with pos = (point-min)
         with end = (ctbl:dest-point-max dest)
         for next = (next-single-property-change pos 'ctbl:cell-id nil end)
         for text-cell = (and next (ctbl:cursor-to-cell next))
