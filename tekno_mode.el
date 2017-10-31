@@ -8,6 +8,7 @@
 (clomacs-defun get-pattern-str techno.core/get-pattern-str)
 (clomacs-defun get-pattern-fx techno.core/get-pattern-fx)
 (clomacs-defun player-active? techno.core/player-active?)
+(clomacs-defun get-synths techno.core/get-synths :return-type :list)
 
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
@@ -41,7 +42,19 @@
   (interactive)
   (setq use-player nil)
   )
-
+(defun ctbl:find-by-cell-id (dest cell-id)
+  "[internal] Return a point where the text property `ctbl:cell-id'
+is equal to cell-id in the current table view. If CELL-ID is not
+found in the current view, return nil."
+  (loop ;with pos = (ctbl:find-position-fast dest cell-id)
+   with pos = (point-min)
+        with end = (ctbl:dest-point-max dest)
+        for next = (next-single-property-change pos 'ctbl:cell-id nil end)
+        for text-cell = (and next (ctbl:cursor-to-cell next))
+        while (and next (< next end)) do
+        (if (and text-cell (equal cell-id text-cell))
+            (return next))
+        (setq pos next)))
 (defun ctbl:dest-ol-selection-set (dest cell-id)
   "[internal] Put a selection overlay on CELL-ID. The selection overlay can be
  put on some cells, calling this function many times.  This
@@ -60,7 +73,8 @@
            (overlay-put overlay 'face
                         (if (= (cdr tcell-id) col-id)
                             'ctbl:face-cell-select
-                          (if (member (intern pattern) current-playing-patterns)
+                          (if (and (stringp (intern pattern))
+                                   (member (intern pattern) current-playing-patterns))
                               'ctbl:face-row-select)
                           ))
            (push overlay ols)
@@ -409,6 +423,7 @@
            req
             (cider-current-connection)
             (clomacs-get-session (cider-current-connection)))))
+(setq tempo sp)
     ;; (with-output-to-temp-buffer "*scratch*"
     ;;   (print req))
 
@@ -552,10 +567,11 @@
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
-               (clomacs-get-session (cider-current-connection)))))
-    ;; (if t
-    ;;     (with-output-to-temp-buffer "*scratch*"
-    ;;       (print res)))
+               (clomacs-get-session (cider-current-connection))))
+         (err (nrepl-dict-get res "err")))
+    (if (stringp err)
+        (with-output-to-temp-buffer "*scratch*"
+          (print err)))
       (update-pattern-view))
   )
 
@@ -691,7 +707,7 @@
   (let* ((param (copy-ctbl:param ctbl:default-rendering-param))
          (meh (setf (ctbl:param-bg-colors param)
                     (lambda (model row-id col-id str)
-                      (if (member (intern (replace-regexp-in-string "[\s-]+" "" str)) current-playing-patterns)
+                      (if (and (stringp str) (member (intern (replace-regexp-in-string "[\s-]+" "" str)) current-playing-patterns))
                           "blue5"
                         "black"))))
          (component (ctbl:create-table-component-buffer
@@ -888,4 +904,4 @@
 res
 )
 
-  )
+)
