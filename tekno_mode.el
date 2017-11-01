@@ -18,6 +18,8 @@
 (setq use-player t)
 (setq pattern-sizes (make-hash-table :test 'equal))
 (setq tempo "80")
+(setq synth-params (make-hash-table :test 'equal))
+
 
 (set-face-foreground 'ctbl:face-row-select "white")
 (set-face-background 'ctbl:face-row-select "blue5")
@@ -46,8 +48,10 @@
   "[internal] Return a point where the text property `ctbl:cell-id'
 is equal to cell-id in the current table view. If CELL-ID is not
 found in the current view, return nil."
-  (loop ;with pos = (ctbl:find-position-fast dest cell-id)
-   with pos = (point-min)
+  (loop
+   with pos = (ctbl:dest-point-min dest)
+   ;with pos = (ctbl:find-position-fast dest cell-id)
+   ;with pos = (point-min)
         with end = (ctbl:dest-point-max dest)
         for next = (next-single-property-change pos 'ctbl:cell-id nil end)
         for text-cell = (and next (ctbl:cursor-to-cell next))
@@ -55,6 +59,7 @@ found in the current view, return nil."
         (if (and text-cell (equal cell-id text-cell))
             (return next))
         (setq pos next)))
+
 (defun ctbl:dest-ol-selection-set (dest cell-id)
   "[internal] Put a selection overlay on CELL-ID. The selection overlay can be
  put on some cells, calling this function many times.  This
@@ -73,8 +78,8 @@ found in the current view, return nil."
            (overlay-put overlay 'face
                         (if (= (cdr tcell-id) col-id)
                             'ctbl:face-cell-select
-                          (if (and (stringp (intern pattern))
-                                   (member (intern pattern) current-playing-patterns))
+                          (if (and pattern (intern pattern)
+                               (member (intern pattern) current-playing-patterns))
                               'ctbl:face-row-select)
                           ))
            (push overlay ols)
@@ -905,3 +910,42 @@ res
 )
 
 )
+
+(defun init-synth-page ()
+  (let* ((data (get-synths))
+         (categories (make-hash-table))
+         (synths (make-hash-table))
+         (params (make-hash-table)))
+    (dolist (d data)
+      (puthash (car d) )
+      )
+    )
+  (goto-char (point-min))
+  (insert "Categories\n")
+  (with-current-buffer "*scratch*"
+    (ctbl:create-table-component-region
+     :model (ctbl:make-model-from-list
+             '(("a" "b" "c")))
+     :keymap  (ctbl:define-keymap
+               '(
+                 ("w" . ctbl:navi-move-up)
+                 ("s" . ctbl:navi-move-down)
+                 ("a" . ctbl:navi-move-left)
+                 ("d" . ctbl:navi-move-right)
+                 ("c" . ctbl:navi-jump-to-column)
+                 ))
+     )
+    (ctbl:create-table-component-region
+     :model (ctbl:make-model-from-list
+             '((1 2 3 4) (5 6 7 8) (9 10 11 12)))
+     :keymap  (ctbl:define-keymap
+               '(
+                 ("w" . ctbl:navi-move-up)
+                 ("s" . ctbl:navi-move-down)
+                 ("a" . ctbl:navi-move-left)
+                 ("d" . ctbl:navi-move-right)
+                 ("c" . ctbl:navi-jump-to-column)
+                 ))
+     )
+    )
+  )
