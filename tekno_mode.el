@@ -19,6 +19,12 @@
 (setq pattern-sizes (make-hash-table :test 'equal))
 (setq tempo "80")
 (setq synth-params (make-hash-table :test 'equal))
+(setq synth-stack (make-hash-table :test 'equal))
+(setq category-component nil)
+(setq synth-component nil)
+(setq stack-component nil)
+(setq categories (make-hash-table))
+(setq synths (make-hash-table))
 
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -913,39 +919,60 @@ res
 
 (defun init-synth-page ()
   (let* ((data (get-synths))
-         (categories (make-hash-table))
-         (synths (make-hash-table))
-         (params (make-hash-table)))
+         (keymap (ctbl:define-keymap
+                 '(
+                   ("w" . ctbl:navi-move-up)
+                   ("s" . ctbl:navi-move-down)
+                   ("a" . ctbl:navi-move-left)
+                   ("d" . ctbl:navi-move-right)
+                   ("c" . ctbl:navi-jump-to-column)
+                   ("M-a" . (lambda ()
+                              ))
+                   ))))
     (dolist (d data)
-      (puthash (car d) )
+      (puthash (car d) (car (cdr d)) categories)
+      (dolist (s (cdr d))
+        (puthash (car s) (cdr s) synths)
+        )
+      )
+    (with-current-buffer "synth-page"
+      (erase-buffer)
+      (goto-char (point-min))
+                                        ;(insert (format "%s" (list (hash-table-keys categories))))
+      (insert "Categories:\n")
+      (setq category-component (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list
+                     (list (hash-table-keys categories)))
+             :keymap keymap))
+      (insert "\n\n")
+      (insert "Synths:\n\n")
+      (setq synth-component
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list
+                     (seq-partition
+                      (mapcar 'car (gethash (car (hash-table-keys categories)) categories))
+                      10))
+             :keymap keymap
+             ))
+      (setq stack-component
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list '())
+             :keymap keymap
+             ))
+      (insert "\n\n")
+      (insert "Stack:\n\n")
+      (ctbl:cp-add-selection-change-hook
+       category-component
+       (function (lambda ()
+                   (ctbl:cp-set-model
+                    synth-component
+                    (ctbl:make-model-from-list
+                     (seq-partition
+                      (mapcar 'car (gethash (ctbl:cp-get-selected-data-cell category-component) categories))
+                      10)))
+                   )))
       )
     )
   (goto-char (point-min))
-  (insert "Categories\n")
-  (with-current-buffer "*scratch*"
-    (ctbl:create-table-component-region
-     :model (ctbl:make-model-from-list
-             '(("a" "b" "c")))
-     :keymap  (ctbl:define-keymap
-               '(
-                 ("w" . ctbl:navi-move-up)
-                 ("s" . ctbl:navi-move-down)
-                 ("a" . ctbl:navi-move-left)
-                 ("d" . ctbl:navi-move-right)
-                 ("c" . ctbl:navi-jump-to-column)
-                 ))
-     )
-    (ctbl:create-table-component-region
-     :model (ctbl:make-model-from-list
-             '((1 2 3 4) (5 6 7 8) (9 10 11 12)))
-     :keymap  (ctbl:define-keymap
-               '(
-                 ("w" . ctbl:navi-move-up)
-                 ("s" . ctbl:navi-move-down)
-                 ("a" . ctbl:navi-move-left)
-                 ("d" . ctbl:navi-move-right)
-                 ("c" . ctbl:navi-jump-to-column)
-                 ))
-     )
-    )
+
   )
