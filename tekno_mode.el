@@ -23,8 +23,9 @@
 (setq category-component nil)
 (setq synth-component nil)
 (setq stack-component nil)
-(setq categories (make-hash-table))
-(setq synths (make-hash-table))
+(setq categories (make-hash-table :test 'equal))
+(setq synths (make-hash-table :test 'equal))
+(setq synth-defaults (make-hash-table :test 'equal))
 
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -931,15 +932,68 @@ res
   )
 
 (defun update-synth-stack ()
-  (let* ((s (ctbl:cp-get-selected-data-cell synth-stack)))
+  (let* ((s (nth 0 (nth (car (ctbl:component-selected stack-component)) (ctbl:component-sorted-data stack-component))))
+         (s (if (member s (hash-table-keys synth-stack)) s (car (hash-table-keys synth-stack))))
+         (data (mapcar
+                (lambda (k)
+                  (append (list k)
+                          (if (eq s k)
+                              (progn
+                                (setq s-key k)
+                                (hash-table-values (gethash k synth-params)))
+                            '()))
+                  ) (hash-table-keys synth-stack))))
     (ctbl:cp-set-model
-     synth-component
+     stack-component
      (ctbl:make-model-from-list
-      (seq-partition
-       (mapcar 'car (gethash (ctbl:cp-get-selected-data-cell category-component) categories))
-       8)))
+      data
+      (append (list "Synth")
+              (mapcar (lambda (k)
+                         (format "%s %s" k (gethash k (gethash s-key synth-defaults))))
+                      (hash-table-keys (gethash s-key synth-defaults))))
+      ))
     )
   )
+
+(defun set-synth-handler ()
+  (let* ((synths (format "[%s]" (apply 'concat
+                                       (loop for k being the hash-keys of synth-stack
+                                             collect
+                                             (concat " [" k " ["
+                                                      (apply 'concat
+                                                             (loop for p being the hash-keys of (gethash k synth-params)
+                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")))
+                                                                               (concat ":" p " " (number-to-string (gethash p (gethash k synth-params))) " ")
+                                                                             "")))
+                                                      "] " "] ")))))
+         (body (format
+                "(ns techno.core)
+(let [params %s]
+    (on-event [:midi :note-on]
+              (fn [m]
+                 (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
+                                          (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
+                                          true []))
+                      play (fn [synth args]
+                             (techno.recorder/record-action [synth args])
+                             (apply synth args)
+                             )]
+                  (doseq [[s p] params]
+                         (play s (concat p (args s))))
+                  ))
+              ::prophet-midi))" synths))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         )
+    (with-current-buffer "*scratch*"
+      (insert (format "%s"  res))
+      )
+  ))
+
+
+
 (defun init-synth-page ()
   (let* ((data (get-synths))
          (keymap (ctbl:define-keymap
@@ -950,17 +1004,52 @@ res
                    ("d" . ctbl:navi-move-right)
                    ("c" . ctbl:navi-jump-to-column)
                    ("M-a" . (lambda ()
+                              (interactive)
                               (let ((s (ctbl:cp-get-selected-data-cell synth-component)))
-                                (if (not (gethash s synths))
+                                (if (not (gethash s synth-stack))
                                     (puthash s
                                              (+ (hash-table-count synth-stack) 1)
-                                             synth-stack)))
+                                             synth-stack))
+                                (ctbl:cp-set-selected-cell stack-component (ctbl:cell-id 0 0)))
+                              (update-synth-stack)
+                              (set-synth-handler)
+                              ))
+                   ("M-r" . (lambda ()
+                              (interactive)
+                              (let ((s (ctbl:cp-get-selected-data-cell stack-component)))
+                                (remhash s synth-stack))
+                              (update-synth-stack)
+                              (set-synth-handler)
+                              ))
+                   ("M-e" . (lambda ()
+                              (interactive)
+                              (let* ((p (ctbl:component-selected stack-component))
+                                     (s (nth 0 (nth
+                                             (car p)
+                                             (ctbl:component-sorted-data stack-component))))
+                                     (v (read-string "val: ")))
+                                (puthash (nth (- (cdr p) 1)
+                                              (hash-table-keys (gethash s synth-params)))
+                                         (string-to-number v)
+                                         (gethash s synth-params))
+                                (update-synth-stack)
+                                (set-synth-handler)
+                                )
                               ))
                    ))))
     (dolist (d data)
       (puthash (car d) (car (cdr d)) categories)
-      (dolist (s (cdr d))
-        (puthash (car s) (cdr s) synths)
+      (dolist (s (car (cdr d)))
+        (puthash (car s) (car (cdr s)) synths)
+        (let ((defaults  (make-hash-table :test 'equal))
+              (params  (make-hash-table :test 'equal)))
+          (dolist (p (car (cdr s)))
+            (puthash (car p) (car (cdr p)) defaults)
+            (puthash (car p) (car (cdr p)) params)
+            )
+          (puthash (car s) defaults synth-defaults)
+          (puthash (car s) params synth-params)
+          )
         )
       )
     (with-current-buffer "synth-page"
@@ -1002,9 +1091,9 @@ res
          (goto-char (ctbl:find-by-cell-id (ctbl:component-dest category-component) (ctbl:cp-get-selected category-component)))
          ))
 
+      (ctbl:cp-add-selection-change-hook
+       stack-component
+       'update-synth-stack)
       )
     )
-  (goto-char (point-min))
-
   )
-(setq debug-on-error t)
