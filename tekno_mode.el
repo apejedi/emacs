@@ -917,6 +917,29 @@ res
 
 )
 
+(defun switch-component ()
+  (interactive)
+  (let ((cur (ctbl:cp-get-component)))
+    (if (eq cur category-component)
+        (goto-char (ctbl:find-by-cell-id (ctbl:component-dest synth-component) (ctbl:cell-id 0 0)))
+      (if (eq cur synth-component)
+          (goto-char (ctbl:find-by-cell-id (ctbl:component-dest stack-component) (ctbl:cell-id 0 0)))
+        (goto-char (ctbl:find-by-cell-id (ctbl:component-dest category-component) (ctbl:cell-id 0 0)))
+        )
+      )
+    )
+  )
+
+(defun update-synth-stack ()
+  (let* ((s (ctbl:cp-get-selected-data-cell synth-stack)))
+    (ctbl:cp-set-model
+     synth-component
+     (ctbl:make-model-from-list
+      (seq-partition
+       (mapcar 'car (gethash (ctbl:cp-get-selected-data-cell category-component) categories))
+       8)))
+    )
+  )
 (defun init-synth-page ()
   (let* ((data (get-synths))
          (keymap (ctbl:define-keymap
@@ -927,6 +950,11 @@ res
                    ("d" . ctbl:navi-move-right)
                    ("c" . ctbl:navi-jump-to-column)
                    ("M-a" . (lambda ()
+                              (let ((s (ctbl:cp-get-selected-data-cell synth-component)))
+                                (if (not (gethash s synths))
+                                    (puthash s
+                                             (+ (hash-table-count synth-stack) 1)
+                                             synth-stack)))
                               ))
                    ))))
     (dolist (d data)
@@ -936,6 +964,7 @@ res
         )
       )
     (with-current-buffer "synth-page"
+      (local-set-key (kbd "<tab>") 'switch-component)
       (erase-buffer)
       (goto-char (point-min))
                                         ;(insert (format "%s" (list (hash-table-keys categories))))
@@ -951,28 +980,31 @@ res
              :model (ctbl:make-model-from-list
                      (seq-partition
                       (mapcar 'car (gethash (car (hash-table-keys categories)) categories))
-                      10))
-             :keymap keymap
-             ))
-      (setq stack-component
-            (ctbl:create-table-component-region
-             :model (ctbl:make-model-from-list '())
+                      8))
              :keymap keymap
              ))
       (insert "\n\n")
       (insert "Stack:\n\n")
+      (setq stack-component
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list '((1)))
+             :keymap keymap
+             ))
       (ctbl:cp-add-selection-change-hook
        category-component
-       (function (lambda ()
-                   (ctbl:cp-set-model
-                    synth-component
-                    (ctbl:make-model-from-list
-                     (seq-partition
-                      (mapcar 'car (gethash (ctbl:cp-get-selected-data-cell category-component) categories))
-                      10)))
-                   )))
+       (lambda ()
+         (ctbl:cp-set-model
+          synth-component
+          (ctbl:make-model-from-list
+           (seq-partition
+            (mapcar 'car (gethash (ctbl:cp-get-selected-data-cell category-component) categories))
+            8)))
+         (goto-char (ctbl:find-by-cell-id (ctbl:component-dest category-component) (ctbl:cp-get-selected category-component)))
+         ))
+
       )
     )
   (goto-char (point-min))
 
   )
+(setq debug-on-error t)
