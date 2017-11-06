@@ -712,6 +712,7 @@ found in the current view, return nil."
   )
 
 ;; (init-pattern-view)
+; (init-synth-page)
 
 ;; (message "%s" current-playing-patterns)
 ;; (message "%s"  (member (intern ":sdst") current-playing-patterns))
@@ -920,7 +921,9 @@ res
 
 (defun switch-component ()
   (interactive)
-  (let ((cur (ctbl:cp-get-component)))
+  (let ((cur (if (not (get-text-property (point) 'ctbl:component))
+                 stack-component
+                 (ctbl:cp-get-component))))
     (if (eq cur category-component)
         (goto-char (ctbl:find-by-cell-id (ctbl:component-dest synth-component) (ctbl:cell-id 0 0)))
       (if (eq cur synth-component)
@@ -932,69 +935,42 @@ res
   )
 
 (defun update-synth-stack ()
-  (let* ((s (nth 0 (nth (car (ctbl:component-selected stack-component)) (ctbl:component-sorted-data stack-component))))
-         (s (if (member s (hash-table-keys synth-stack)) s (car (hash-table-keys synth-stack))))
-         (data (mapcar
-                (lambda (k)
-                  (append (list k)
-                          (if (eq s k)
-                              (progn
-                                (setq s-key k)
-                                (hash-table-values (gethash k synth-params)))
-                            '()))
-                  ) (hash-table-keys synth-stack))))
-    (ctbl:cp-set-model
-     stack-component
-     (ctbl:make-model-from-list
-      data
-      (append (list "Synth")
-              (mapcar (lambda (k)
-                         (format "%s %s" k (gethash k (gethash s-key synth-defaults))))
-                      (hash-table-keys (gethash s-key synth-defaults))))
-      ))
+  (if (not (equal (ctbl:cp-get-selected-data-cell category-component) "samples"))
+      (let* ((s (nth 0 (nth (car (ctbl:component-selected stack-component)) (ctbl:component-sorted-data stack-component))))
+             (s (if (member s (hash-table-keys synth-stack)) s (car (hash-table-keys synth-stack))))
+             (data (mapcar
+                    (lambda (k)
+                      (append (list k)
+                              (if (eq s k)
+                                  (progn
+                                    (setq s-key k)
+                                    (hash-table-values (gethash k synth-params)))
+                                '()))
+                      ) (hash-table-keys synth-stack))))
+        (ctbl:cp-set-model
+         stack-component
+         (ctbl:make-model-from-list
+          data
+          (append (list "Synth")
+                  (mapcar (lambda (k)
+                            (format "%s %s" k (gethash k (gethash s-key synth-defaults))))
+                          (hash-table-keys (gethash s-key synth-defaults))))
+          ))
+        )
+    (let* ((k (ctbl:cp-get-selected-data-cell synth-component))
+           (s (ctbl:cp-get-selected-data-cell stack-component))
+           (body (format "(ns techno.core) ((get-in drum-kits [:%s :%s]))" k s))
+           (res (nrepl-sync-request:eval
+                 body
+                 (cider-current-connection)
+                 (clomacs-get-session (cider-current-connection)))))
+        )
     )
   )
 
-(defun set-synth-handler ()
-  (let* ((synths (format "[%s]" (apply 'concat
-                                       (loop for k being the hash-keys of synth-stack
-                                             collect
-                                             (concat " [" k " ["
-                                                      (apply 'concat
-                                                             (loop for p being the hash-keys of (gethash k synth-params)
-                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")))
-                                                                               (concat ":" p " " (number-to-string (gethash p (gethash k synth-params))) " ")
-                                                                             "")))
-                                                      "] " "] ")))))
-         (body (format
-                "(ns techno.core)
-(let [params %s]
-    (on-event [:midi :note-on]
-              (fn [m]
-                 (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
-                                          (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
-                                          true []))
-                      play (fn [synth args]
-                             (techno.recorder/record-action [synth args])
-                             (apply synth args)
-                             )]
-                  (doseq [[s p] params]
-                         (play s (concat p (args s))))
-                  ))
-              ::prophet-midi))" synths))
-         (res (nrepl-sync-request:eval
-               body
-               (cider-current-connection)
-               (clomacs-get-session (cider-current-connection))))
-         )
-    (with-current-buffer "*scratch*"
-      (insert (format "%s"  res))
-      )
-  ))
-
-
 
 (defun init-synth-page ()
+  (get-buffer-create "synth-page")
   (let* ((data (get-synths))
          (keymap (ctbl:define-keymap
                  '(
@@ -1090,6 +1066,21 @@ res
             8)))
          (goto-char (ctbl:find-by-cell-id (ctbl:component-dest category-component) (ctbl:cp-get-selected category-component)))
          ))
+      (ctbl:cp-add-selection-change-hook
+       synth-component
+       (lambda ()
+         (if (equal (ctbl:cp-get-selected-data-cell category-component) "samples")
+             (progn
+               (ctbl:cp-set-model
+                stack-component
+                (ctbl:make-model-from-list
+                 (seq-partition
+                  (hash-table-keys (gethash (ctbl:cp-get-selected-data-cell synth-component) synth-params))
+                  5))
+                )
+               (goto-char (ctbl:find-by-cell-id (ctbl:component-dest synth-component) (ctbl:cp-get-selected synth-component))))
+           )
+         ))
 
       (ctbl:cp-add-selection-change-hook
        stack-component
@@ -1097,3 +1088,41 @@ res
       )
     )
   )
+
+
+(defun set-synth-handler ()
+  (let* ((synths (format "[%s]" (apply 'concat
+                                       (loop for k being the hash-keys of synth-stack
+                                             collect
+                                             (concat " [" k " ["
+                                                      (apply 'concat
+                                                             (loop for p being the hash-keys of (gethash k synth-params)
+                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")))
+                                                                               (concat ":" p " " (number-to-string (gethash p (gethash k synth-params))) " ")
+                                                                             "")))
+                                                      "] " "] ")))))
+         (body (format
+                "(ns techno.core)
+(let [params %s]
+    (on-event [:midi :note-on]
+              (fn [m]
+                 (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
+                                          (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
+                                          true []))
+                      play (fn [synth args]
+                             (techno.recorder/record-action [synth args])
+                             (apply synth args)
+                             )]
+                  (doseq [[s p] params]
+                         (play s (concat p (args s))))
+                  ))
+              ::prophet-midi))" synths))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         )
+    (with-current-buffer "*scratch*"
+      (insert (format "%s"  res))
+      )
+  ))
