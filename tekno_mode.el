@@ -13,6 +13,7 @@
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
 (setq pattern-queue-rm '())
+(setq pattern-queue-mod '())
 (setq pattern-print-list '())
 (setq techno-patterns nil)
 (setq use-player t)
@@ -141,6 +142,14 @@ found in the current view, return nil."
 
 
 
+(defun pattern-mod-q ()
+  (interactive)
+  (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns)))
+    (if (not (member key pattern-queue-rm))
+        (setq pattern-queue-mod (cons key pattern-queue-mod)))
+    (update-pattern-view)
+    )
+  )
 (defun pattern-add-q ()
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns)))
@@ -153,12 +162,24 @@ found in the current view, return nil."
 (defun pattern-rm-q ()
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns)))
-    (if (not (member key pattern-queue-add))
+    (if (and (not (member key pattern-queue-add)) (not (member key pattern-queue-mod)))
         (setq pattern-queue-rm (cons key pattern-queue-rm)))
     (setq pattern-queue-add (delete key pattern-queue-add))
+    (setq pattern-queue-mod (delete key pattern-queue-mod))
     (update-pattern-view)
     )
   )
+
+(defun pattern-mute-q ()
+  (interactive)
+  (dolist (a pattern-queue-add)
+    (add-pattern-key a nil t)
+    )
+  (setq pattern-queue-mod pattern-queue-add)
+  (setq pattern-queue-add '())
+  (update-pattern-view)
+  )
+
 
 (defun pattern-flush-q ()
   (interactive)
@@ -171,6 +192,7 @@ found in the current view, return nil."
       )
     (setq pattern-queue-add '())
     (setq pattern-queue-rm '())
+    (setq pattern-queue-mod '())
     (update-pattern-view)
     )
   )
@@ -611,16 +633,23 @@ found in the current view, return nil."
     (interactive)
     (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns))
            (delta (if big "-0.1" "-0.01"))
-           (mod-amp (if use-player "p/mod-amp" "s/mod-amp")))
-    (nrepl-sync-request:eval
+           (mod-amp (if use-player "p/mod-amp" "s/mod-amp"))
+           (pattern-str (if (> (length pattern-queue-mod) 0)
+                            (apply 'concat
+                                   (mapcar (lambda (p)
+                                             (format "\n(%s player %s %s)\n" mod-amp p delta)
+                                             ) pattern-queue-mod))
+                          (format "(%s player %s %s)" mod-amp pattern delta)))
+           )
+      (nrepl-sync-request:eval
              (concat "(ns techno.core
         (:use [overtone.core]
               )
         (:require [techno.sequencer :as s]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
-                  [clojure.string :as string]))
-(" mod-amp " player " pattern " "  delta  ")")
+                  [clojure.string :as string]))"
+                     pattern-str)
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
 )
@@ -630,7 +659,13 @@ found in the current view, return nil."
     (interactive)
     (let* ((pattern (ctbl:cp-get-selected-data-cell techno-patterns))
            (delta (if big "0.1" "0.01"))
-           (mod-amp (if use-player "p/mod-amp" "s/mod-amp")))
+           (mod-amp (if use-player "p/mod-amp" "s/mod-amp"))
+           (pattern-str (if (> (length pattern-queue-mod) 0)
+                            (apply 'concat
+                                   (mapcar (lambda (p)
+                                             (format "\n(%s player %s %s)\n" mod-amp p delta)
+                                             ) pattern-queue-mod))
+                          (format "(%s player %s %s)" mod-amp pattern delta))))
     (nrepl-sync-request:eval
      (concat "(ns techno.core
         (:use [overtone.core]
@@ -638,8 +673,8 @@ found in the current view, return nil."
         (:require [techno.sequencer :as s]
                   [clojure.tools.reader.edn :as edn]
                   [clojure.tools.reader.reader-types :as readers]
-                  [clojure.string :as string]))
-(" mod-amp " player " pattern " " delta ")")
+                  [clojure.string :as string]))"
+             pattern-str)
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection))))
  )
@@ -739,6 +774,8 @@ found in the current view, return nil."
                                     ("M-r" . rm-pattern)
                                     ("C-M-x" . pattern-rm-q)
                                     ("C-M-g" . pattern-flush-q)
+                                    ("C-M-f" . pattern-mute-q)
+                                    ("C-M-m" . pattern-mod-q)
                                     ("C-M-u" . update-pattern-view)
                                     ("M-<down>" . dec-amp-big)
                                     ("M-<up>" . inc-amp-big)
@@ -881,6 +918,7 @@ found in the current view, return nil."
         (insert "\n\n\n")
         (insert (format "Queue Add: %s \n" pattern-queue-add))
         (insert (format "Queue Rm: %s \n" pattern-queue-rm))
+        (insert (format "Queue Mod: %s \n" pattern-queue-mod))
         (insert (format "Tempo: %s \n" tempo))
         (insert (format "Player Active: %s \n" (player-active?)))
         (insert "\n\n")
