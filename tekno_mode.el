@@ -27,6 +27,8 @@
 (setq categories (make-hash-table :test 'equal))
 (setq synths (make-hash-table :test 'equal))
 (setq synth-defaults (make-hash-table :test 'equal))
+(setq root-note "C4")
+(setq scale-type "major")
 
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -1127,6 +1129,52 @@ res
     )
   )
 
+(defun set-scale ()
+  (interactive)
+  (setq root-note (read-string "root: "))
+  (setq scale-type (read-string "type: "))
+  )
+
+(defun get-scale-p ()
+  (interactive)
+  (let* ((body (format "(ns techno.core
+                          (:use [techno.recorder]))
+                        (get-seq-p %s %s
+                           #(degree-fn (scale %s %s) %%)
+                           #(if (not (= :| %%)) (keyword (str \"0\" (name %%))) %%))"
+                       tempo 8 root-note scale-type))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         (res (substring (nrepl-dict-get res "value") 3))
+         (res (replace-regexp-in-string ":|" ":|
+" res)))
+    (kill-new
+     (apply 'concat
+            (loop for k being the hash-keys of synth-stack
+                  collect
+                  (format
+                   "(p/scale-p
+%s
+%s %s
+%s
+%s 0 [%s])
+
+"                  k root-note scale-type res "1/8"
+                   (apply 'concat
+                          (loop for p being the hash-keys of (gethash k synth-params)
+                                collect (if (and (not (equal p "note"))
+                                                 (not (equal p "freq"))
+                                                 (not (equal p "out-bus")))
+                                            (concat ":" p " "
+                                                    (number-to-string
+                                                     (gethash p (gethash k synth-params)))
+                                                    " ")
+                                          ""))))))
+     )
+    )
+  )
 
 (defun set-synth-handler ()
   (let* ((synths (format "[%s]" (apply 'concat
@@ -1149,7 +1197,7 @@ res
                                           (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq1\"))) [:freq1 (midi->hz (:data1 m))]
                                           true []))
                       play (fn [synth args]
-                             (techno.recorder/record-action [synth args])
+                             (techno.recorder/record-action [synth args (:data1 m)])
                              (apply synth args)
                              )]
                   (doseq [[s p] params]
@@ -1161,7 +1209,8 @@ res
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection))))
          )
-    (with-current-buffer "*scratch*"
-      (insert (format "%s"  res))
-      )
+    ;; (with-current-buffer "*scratch*"
+    ;;   (insert (format "%s"  body))
+    ;;   (insert (format "%s"  res))
+    ;;   )
   ))
