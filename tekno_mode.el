@@ -29,6 +29,7 @@
 (setq synth-defaults (make-hash-table :test 'equal))
 (setq root-note "C4")
 (setq scale-type "major")
+(setq div "8")
 
 
 (set-face-foreground 'ctbl:face-row-select "white")
@@ -1134,6 +1135,10 @@ res
   (setq root-note (read-string "root: "))
   (setq scale-type (read-string "type: "))
   )
+(defun set-div ()
+  (interactive)
+  (setq div (read-string "div: "))
+  )
 
 (defun get-scale-p ()
   (interactive)
@@ -1142,7 +1147,7 @@ res
                         (get-seq-p %s %s
                            #(degree-fn (scale %s %s) %%)
                            #(if (not (= :| %%)) (keyword (str \"0\" (name %%))) %%))"
-                       tempo 8 root-note scale-type))
+                       tempo div root-note scale-type))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
@@ -1159,9 +1164,9 @@ res
 %s
 %s %s
 %s
-%s 0 [%s])
+1/%s 0 [%s])
 
-"                  k root-note scale-type res "1/8"
+"                  k root-note scale-type res div
                    (apply 'concat
                           (loop for p being the hash-keys of (gethash k synth-params)
                                 collect (if (and (not (equal p "note"))
