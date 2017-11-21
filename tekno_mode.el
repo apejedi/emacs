@@ -1181,6 +1181,34 @@ res
     )
   )
 
+(defun remove-synth-effects ()
+  (interactive)
+  (let* ((body "(ns techno.core)
+                        (group-clear synth-grp)")
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         )
+      )
+  )
+
+(defun add-synth-effects ()
+  (interactive)
+  (let* ((effects (buffer-substring-no-properties (region-beginning) (region-end)))
+         (body (format "(ns techno.core)
+                        (group-clear synth-grp)
+                        (doseq [[k e] %s] (apply (first e)
+                        (concat [[:head synth-grp] :audio-bus 0] (vec (rest e)))))"
+                       effects))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         )
+      )
+  )
+
 (defun set-synth-handler ()
   (let* ((synths (format "[%s]" (apply 'concat
                                        (loop for k being the hash-keys of synth-stack
@@ -1194,16 +1222,18 @@ res
                                                       "] " "] ")))))
          (body (format
                 "(ns techno.core)
+(if (not (node-active? synth-grp))
+    (def synth-grp (group :tail 2)))
 (let [params %s]
     (on-event [:midi :note-on]
               (fn [m]
-                 (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
-                                          (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
-                                          (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq1\"))) [:freq1 (midi->hz (:data1 m))]
-                                          true []))
+                  (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
+                                           (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
+                                           (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq1\"))) [:freq1 (midi->hz (:data1 m))]
+                                           true []))
                       play (fn [synth args]
-                             (techno.recorder/record-action [synth args (:data1 m)])
-                             (apply synth args)
+                               (techno.recorder/record-action [synth args (:data1 m)])
+                               (apply synth (concat [[:head synth-grp]] (vec args)))
                              )]
                   (doseq [[s p] params]
                          (play s (concat p (args s))))
