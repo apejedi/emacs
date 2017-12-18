@@ -1268,12 +1268,14 @@ res
 
 (defun get-pattern-bounds ()
   (let* ((text (with-current-buffer "tekno-pattern" (buffer-string)))
+         (text (replace-regexp-in-string "\"" "\\\\\"" text))
          (bounds (get-annotated-pattern text))
          (res (nrepl-sync-request:eval
-               (format "(ns techno.player) (reset! send-offsets %s)
-                        (if (nil? @tekno-client) (mk-tekno-client))" current-pattern)
+               (format "(reset! techno.player/send-offsets %s)
+                        (if (nil? @techno.player/tekno-client) (techno.player/mk-tekno-client))" current-pattern)
                (cider-current-connection)
-               (clomacs-get-session (cider-current-connection)))))
+               (clomacs-get-session (cider-current-connection))))
+         )
     (clrhash highlight-bounds)
     (dolist (b bounds)
       (puthash (car b) (cons (car (car (cdr b))) (car (cdr (car (cdr b)))))
@@ -1284,7 +1286,6 @@ res
 
 (defun highlight-pattern-pos (&optional string)
   (interactive)
-  (setq cur-pos string)
   )
 
 (progn

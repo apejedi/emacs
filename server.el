@@ -34,7 +34,9 @@
   ;; (with-current-buffer "*tekno-server*"
   ;;   (insert (format "got %s\n" string)))
   (if (string= "tekno-pattern" (buffer-name))
-      (highlight-pattern-pos string))
+      (progn
+        (setq cur-pos string)
+        (highlight-pattern-pos string)))
   )
 
 (defun tekno-server-sentinel (proc msg)
