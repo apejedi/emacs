@@ -9,6 +9,7 @@
 (clomacs-defun get-pattern-fx techno.core/get-pattern-fx)
 (clomacs-defun player-active? techno.core/player-active?)
 (clomacs-defun get-synths techno.core/get-synths :return-type :list)
+(clomacs-defun get-annotated-pattern techno.core/get-annotated-pattern :return-type :list)
 
 (setq current-playing-patterns '())
 (setq pattern-queue-add '())
@@ -30,7 +31,8 @@
 (setq root-note "C4")
 (setq scale-type "major")
 (setq div "8")
-
+(setq highlight-bounds (make-hash-table :test 'equal))
+(setq cur-pos nil)
 
 (set-face-foreground 'ctbl:face-row-select "white")
 (set-face-background 'ctbl:face-row-select "blue5")
@@ -38,6 +40,8 @@
 (set-face-foreground 'ctbl:face-cell-select "black")
 (set-face-background 'ctbl:face-cell-select "yellow")
 (set-face-bold-p 'ctbl:face-cell-select t)
+
+(load-file "server.el")
 
 (defvar tekno:uid 1)
 
@@ -626,7 +630,7 @@ found in the current view, return nil."
     (with-current-buffer
         (get-buffer "tekno-pattern")
       (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
-      )
+      (get-pattern-bounds))
     )
   )
 
@@ -728,6 +732,7 @@ found in the current view, return nil."
       )
     (setq current-pattern key)
     (switch-to-buffer-other-window buf)
+    (get-pattern-bounds)
     )
   )
 
@@ -1217,6 +1222,8 @@ res
       )
   )
 
+
+
 (defun set-synth-handler ()
   (let* ((synths (format "[%s]" (apply 'concat
                                        (loop for k being the hash-keys of synth-stack
@@ -1257,3 +1264,33 @@ res
     ;;   (insert (format "%s"  res))
     ;;   )
   ))
+
+
+(defun get-pattern-bounds ()
+  (let* ((text (with-current-buffer "tekno-pattern" (buffer-string)))
+         (bounds (get-annotated-pattern text))
+         (res (nrepl-sync-request:eval
+               (format "(ns techno.player) (reset! send-offsets %s)
+                        (if (nil? tekno-client) (mk-tekno-client))" current-pattern)
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection)))))
+    (clrhash highlight-bounds)
+    (dolist (b bounds)
+      (puthash (car b) (cons (car (car (cdr b))) (car (cdr (car (cdr b)))))
+               highlight-bounds))
+    )
+  )
+
+
+(defun highlight-pattern-pos (&optional string)
+  (interactive)
+  (setq cur-pos string)
+  )
+
+(progn
+  (define-eval-sexp-fu-flash-command highlight-pattern-pos
+    (eval-sexp-fu-flash (lambda ()
+                          (gethash cur-pos highlight-bounds)
+                          )))
+  (tekno-server-start)
+  )
