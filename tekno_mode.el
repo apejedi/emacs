@@ -1271,7 +1271,7 @@ res
          (bounds (get-annotated-pattern text))
          (res (nrepl-sync-request:eval
                (format "(ns techno.player) (reset! send-offsets %s)
-                        (if (nil? tekno-client) (mk-tekno-client))" current-pattern)
+                        (if (nil? @tekno-client) (mk-tekno-client))" current-pattern)
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection)))))
     (clrhash highlight-bounds)
