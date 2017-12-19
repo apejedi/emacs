@@ -332,7 +332,7 @@ found in the current view, return nil."
         '[techno.melody])
          (require '[techno.sequencer :as s]
                   '[techno.player :as p])
-         (p/play-p " pattern " " (if tempo tempo "80") ")"))
+         (p/play-p (assoc " pattern " :key " current-pattern ") " (if tempo tempo "80") ")"))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
