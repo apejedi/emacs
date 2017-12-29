@@ -710,7 +710,7 @@ found in the current view, return nil."
     )
   )
 
-(defun show-pattern-view ()
+(defun show-pattern-view (&optional switch)
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
          (buf (get-buffer-create "tekno-pattern")))
@@ -732,7 +732,7 @@ found in the current view, return nil."
       (local-set-key (kbd "C-=") 'start-stop-player)
       )
     (setq current-pattern key)
-    (switch-to-buffer-other-window buf)
+    (if switch (switch-to-buffer-other-window buf))
     (get-pattern-bounds)
     )
   )
@@ -793,7 +793,8 @@ found in the current view, return nil."
 
                                     ("C-e" . ctbl:navi-move-right-most)
                                     ("C-a" . ctbl:navi-move-left-most)
-                                    ("<return>" . show-pattern-view)
+                                    ("<return>" . (lambda () (interactive) (show-pattern-view t)))
+                                    ("M-v" . (lambda () (interactive) (show-pattern-view)))
                                     ("g" . ctbl:action-update-buffer)
 
                                     ([mouse-1] . ctbl:navi-on-click)
