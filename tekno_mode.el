@@ -254,7 +254,7 @@ found in the current view, return nil."
 (defun start-player ()
   (interactive)
   (let* ((init (if use-player (concat " (if (not (contains? (p/scheduled-jobs) player))
-                     (def player (p/get-s 80 {:div 8})))"
+                     (def player (p/get-s 80 {:div 16})))"
                                       (if tempo (concat " (p/set-sp player " tempo ")") ""))
                 "(if (or (nil? player) (not (node-active? player)))
                     (let [p (s/get-s
@@ -273,38 +273,39 @@ found in the current view, return nil."
             [clojure.tools.reader.reader-types :as readers]
             [clojure.string :as string]))
 " init "
-(def sync-to-midi (atom true))
-(let [started (atom false)
-              stopped (atom false)]
-  (on-event
-   [:midi nil]
-   (fn [m]
-       ;; (println (:status m))
-       ;; (when (= (:status m) :song-position-pointer)
-       ;;   (println \"pointer\"))
-       (when (and (not @stopped)
-                  ;; (= (:status m) :start)
-                  (= (:status m) :song-position-pointer)
-                  @sync-to-midi)
-         (println \"syncing\")
-         ;(techno.synths/o-kick)        ;
-         (s/reset-s player)
-         (reset! started true)
-         )
-       (when (= (:status m) :stop)
-         (reset! stopped true)
-         )
-       (when (and (= (:status m) :song-position-pointer) @stopped)
-         (println \"stopping\")
-         (reset! started false)
-         (reset! stopped false))
-       ) :midi-clock))
+;; (def sync-to-midi (atom true))
+;; (let [started (atom false)
+;;               stopped (atom false)]
+;;   (on-event
+;;    [:midi nil]
+;;    (fn [m]
+;;        ;; (println (:status m))
+;;        ;; (when (= (:status m) :song-position-pointer)
+;;        ;;   (println \"pointer\"))
+;;        (when (and (not @stopped)
+;;                   ;; (= (:status m) :start)
+;;                   (= (:status m) :song-position-pointer)
+;;                   @sync-to-midi)
+;;          (println \"syncing\")
+;;          ;(techno.synths/o-kick)        ;
+;;          (s/reset-s player)
+;;          (reset! started true)
+;;          )
+;;        (when (= (:status m) :stop)
+;;          (reset! stopped true)
+;;          )
+;;        (when (and (= (:status m) :song-position-pointer) @stopped)
+;;          (println \"stopping\")
+;;          (reset! started false)
+;;          (reset! stopped false))
+;;        ) :midi-clock))
 ")
             (cider-current-connection)
-            (clomacs-get-session (cider-current-connection)))))
+            (clomacs-get-session (cider-current-connection))))
+)
     ;; (with-output-to-temp-buffer "*scratch*"
     ;;   (print res))
-(add-dummy-p)
+;(add-dummy-p)
 (update-pattern-view)
 )
 )
