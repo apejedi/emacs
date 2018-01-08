@@ -28,11 +28,18 @@
 (setq categories (make-hash-table :test 'equal))
 (setq synths (make-hash-table :test 'equal))
 (setq synth-defaults (make-hash-table :test 'equal))
+(setq pattern-fx (make-hash-table :test 'equal))
 (setq root-note "C4")
 (setq scale-type "major")
 (setq div "8")
 (setq highlight-bounds (make-hash-table :test 'equal))
 (setq cur-pos nil)
+(setq player-info nil)
+(setq fx-chooser nil)
+(setq fx-stack nil)
+(setq fx-data (make-hash-table :test 'equal))
+(setq tekno-components '(techno-patterns player-info fx-chooser fx-stack))
+(nconc tekno-components tekno-components)
 
 (set-face-foreground 'ctbl:face-row-select "white")
 (set-face-background 'ctbl:face-row-select "blue5")
@@ -715,6 +722,7 @@ found in the current view, return nil."
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
          (buf (get-buffer-create "tekno-pattern")))
     (with-current-buffer buf
+      (read-only-mode -1)
       (erase-buffer)
       (insert (replace-regexp-in-string "\\\\n" "
 " (gethash key pattern-data)))
@@ -755,74 +763,276 @@ found in the current view, return nil."
       (update-pattern-view))
   )
 
+(defun switch-stack ()
+  (interactive)
+  (let* ((cur (if (not (get-text-property (point) 'ctbl:component))
+                  techno-patterns
+                  (ctbl:cp-get-component))
+          ))
+    (while (not (eq (symbol-value (car tekno-components)) cur))
+      (setq tekno-components (cdr tekno-components)))
+    (setq tekno-components (cdr tekno-components))
+    (goto-char
+     (ctbl:find-by-cell-id
+      (ctbl:component-dest (symbol-value (car tekno-components)))
+      (ctbl:cell-id 0 0)))
+    ))
 ;; (init-pattern-view)
 ; (init-synth-page)
 
 ;; (message "%s" current-playing-patterns)
 ;; (message "%s"  (member (intern ":sdst") current-playing-patterns))
-(defun init-pattern-view ()
-  (let* ((param (copy-ctbl:param ctbl:default-rendering-param))
-         (meh (setf (ctbl:param-bg-colors param)
-                    (lambda (model row-id col-id str)
-                      (if (and (stringp str) (member (intern (replace-regexp-in-string "[\s-]+" "" str)) current-playing-patterns))
-                          "blue5"
-                        "black"))))
-         (component (ctbl:create-table-component-buffer
-                     :buffer (get-buffer-create "tekno") :model (build-pattern-model)
-                     :custom-map (ctbl:define-keymap
-                                  '(
-                                    ("w" . ctbl:navi-move-up)
-                                    ("s" . ctbl:navi-move-down)
-                                    ("a" . ctbl:navi-move-left)
-                                    ("d" . ctbl:navi-move-right)
-                                    ("c" . ctbl:navi-jump-to-column)
-                                    ("M-a" . add-pattern)
-                                    ("M-q" . queue-add-pattern)
-                                    ("M-f" . add-pattern-mute)
-                                    ("C-M-a" . pattern-add-q)
-                                    ("M-r" . rm-pattern)
-                                    ("C-M-x" . pattern-rm-q)
-                                    ("C-M-g" . pattern-flush-q)
-                                    ("C-M-f" . pattern-mute-q)
-                                    ("C-M-m" . pattern-mod-q)
-                                    ("C-M-u" . update-pattern-view)
-                                    ("M-<down>" . dec-amp-big)
-                                    ("M-<up>" . inc-amp-big)
-                                    ("S-<down>" . dec-amp)
-                                    ("S-<up>" . inc-amp)
 
-                                    ("C-e" . ctbl:navi-move-right-most)
-                                    ("C-a" . ctbl:navi-move-left-most)
-                                    ("<return>" . (lambda () (interactive) (show-pattern-view t)))
-                                    ("M-v" . (lambda () (interactive) (show-pattern-view)))
-                                    ("g" . ctbl:action-update-buffer)
 
-                                    ([mouse-1] . ctbl:navi-on-click)
-                                    ("C-m" . ctbl:navi-on-click)
-                                    ("C-p" . add-pattern-print)
-                                    ("M-p" . rm-pattern-print)
-                                    ("C-M-r" . clear-pattern-print)
-                                    ("C-M-p" . pattern-print-add-playing)
-                                    ("C-=" . start-stop-player)
-                                    ))
-                     :param param))
-         )
-    (setq techno-patterns component)
-    (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
-    (pop-to-buffer (ctbl:cp-get-buffer component))
-    (goto-line 3)
-    (forward-char 1)
+(defun update-fx-stack ()
+  (let* ((cur (ctbl:cp-get-selected-data-cell techno-patterns))
+         (cur (if cur cur 0))
+         (data (gethash
+                cur
+                fx-data))
+         (row (car (ctbl:component-selected fx-stack)))
+         (selected (if data (gethash row data) nil))
+         (header (if selected (cons "idx" (hash-table-keys selected)) '("idx"))))
+                                        ;(message (format "%s" header))
+    (if data
+        (ctbl:cp-set-model
+         fx-stack
+         (ctbl:make-model-from-list
+          (mapcar
+           (lambda (idx)
+                                        ;(message (format "%s" (gethash idx data)))
+             (if (eq row idx)
+                 (cons idx (hash-table-values (gethash idx data)))
+               (list idx)))
+           (sort (hash-table-keys data) '<))
+          header)))))
+
+
+(defun pause-node (pause)
+  (interactive)
+  (let* ((data (gethash
+                (ctbl:cp-get-selected-data-cell
+                 techno-patterns)
+                fx-data))
+         (data (if data
+                   (gethash
+                   (car (ctbl:component-selected fx-stack))
+                   data)))
+         (id (if data (gethash ":id" data)))
+         (res (if data
+                  (nrepl-sync-request:eval
+                   (format "(ns techno.player) (%s %s)" (if pause "node-pause" "node-start") id)
+                   (cider-current-connection)
+                   (clomacs-get-session (cider-current-connection)))))
+         (res (if data
+                  (substring (nrepl-dict-get res "value") 3))))
+    (if data
+        (progn
+          (puthash ":paused" (if pause "true" "false") data)
+          (update-fx-stack)))
     )
+  )
+
+(defun init-pattern-view ()
+  (with-current-buffer (get-buffer-create "tekno")
+    (read-only-mode -1)
+    (erase-buffer)
+    (insert "Patterns: \n\n")
+    (let* ((param (copy-ctbl:param ctbl:default-rendering-param))
+           (x (setf (ctbl:param-display-header param) nil))
+           (meh (setf (ctbl:param-bg-colors param)
+                      (lambda (model row-id col-id str)
+                        (if (and (stringp str) (member (intern (replace-regexp-in-string "[\s-]+" "" str)) current-playing-patterns))
+                            "blue5"
+                          "black"))))
+           (component (ctbl:create-table-component-region
+                                        ;:buffer (get-buffer-create "tekno")
+                       :model (build-pattern-model)
+                       :keymap (ctbl:define-keymap
+                                    '(
+                                      ("w" . ctbl:navi-move-up)
+                                      ("s" . ctbl:navi-move-down)
+                                      ("a" . ctbl:navi-move-left)
+                                      ("d" . ctbl:navi-move-right)
+                                      ("c" . ctbl:navi-jump-to-column)
+                                      ("M-a" . add-pattern)
+                                      ("M-q" . queue-add-pattern)
+                                      ("M-f" . add-pattern-mute)
+                                      ("C-M-a" . pattern-add-q)
+                                      ("M-r" . rm-pattern)
+                                      ("C-M-x" . pattern-rm-q)
+                                      ("C-M-g" . pattern-flush-q)
+                                      ("C-M-f" . pattern-mute-q)
+                                      ("C-M-m" . pattern-mod-q)
+                                      ("C-M-u" . update-pattern-view)
+                                      ("M-<down>" . dec-amp-big)
+                                      ("M-<up>" . inc-amp-big)
+                                      ("S-<down>" . dec-amp)
+                                      ("S-<up>" . inc-amp)
+
+                                      ("C-e" . ctbl:navi-move-right-most)
+                                      ("C-a" . ctbl:navi-move-left-most)
+                                      ("<return>" . (lambda () (interactive) (show-pattern-view t)))
+                                      ("M-v" . (lambda () (interactive) (show-pattern-view)))
+                                      ("C-p" . add-pattern-print)
+                                      ("M-p" . rm-pattern-print)
+                                      ("C-M-r" . clear-pattern-print)
+                                      ("C-M-p" . pattern-print-add-playing)
+                                      ("C-=" . start-stop-player)
+                                      ("<tab>" . switch-stack)
+                                      ("C-M-v" . (lambda ()
+                                                   (interactive)
+                                                   (update-fx-model
+                                                    (ctbl:cp-get-selected-data-cell
+                                                     techno-patterns))
+                                                   (update-fx-stack)
+                                                   ))
+                                      ))
+                       :param param))
+           )
+      (setq techno-patterns component)
+      (insert "\n\nPlayer: \n\n")
+      (setq player-info
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list
+                     (list (list (format "%s" pattern-queue-add) (format "%s" pattern-queue-rm) (format "%s" pattern-queue-mod) tempo (format "%s" (player-active?))))
+                     '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active"))
+             :keymap (ctbl:define-keymap
+                      '(("w" . ctbl:navi-move-up)
+                        ("s" . ctbl:navi-move-down)
+                        ("a" . ctbl:navi-move-left)
+                        ("d" . ctbl:navi-move-right)
+                        ("C-=" . start-stop-player)
+                        ("<tab>" . switch-stack)))
+             ))
+      (insert "\n\nFX: \n\n")
+      (setq fx-chooser
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf")))
+             :keymap (ctbl:define-keymap
+                      '(("w" . ctbl:navi-move-up)
+                        ("s" . ctbl:navi-move-down)
+                        ("a" . ctbl:navi-move-left)
+                        ("d" . ctbl:navi-move-right)
+                        ("C-=" . start-stop-player)
+                        ("<tab>" . switch-stack)))
+             :param param
+             ))
+      (insert "\nStack: \n\n")
+      (setq fx-stack
+            (ctbl:create-table-component-region
+             :model (ctbl:make-model-from-list
+                     '((1 2 3)))
+             :keymap (ctbl:define-keymap
+                      '(("w" . ctbl:navi-move-up)
+                        ("s" . ctbl:navi-move-down)
+                        ("a" . ctbl:navi-move-left)
+                        ("d" . ctbl:navi-move-right)
+                        ("C-=" . start-stop-player)
+                        ("<tab>" . switch-stack)
+                        ("M-p" . (lambda () (interactive) (pause-node t)))
+                        ("M-s" . (lambda () (interactive) (pause-node nil)))
+                        ("M-e" . (lambda ()
+                                   (interactive)
+                                   (let* ((data (gethash
+                                                 (ctbl:cp-get-selected-data-cell
+                                                  techno-patterns)
+                                                 fx-data))
+                                          (data (if data
+                                                    (gethash
+                                                     (car (ctbl:component-selected fx-stack))
+                                                     data)))
+                                          (p (ctbl:component-selected fx-stack))
+                                          (s (nth 0 (nth (car p)
+                                                         (ctbl:component-sorted-data fx-stack))))
+                                          (v (read-string "val: ")))
+                                     (puthash (nth (- (cdr p) 1)
+                                                   (hash-table-keys (gethash s data)))
+                                              (string-to-number v)
+                                              (gethash s data))
+                                     (update-fx-stack)
+                                     )
+                                   )))))
+            )
+      (ctbl:cp-add-selection-change-hook
+       fx-stack
+       (lambda () (update-fx-stack)))
+      (update-pattern-view)
+      ;(ctbl:cp-add-selection-change-hook component 'update-pattern-view)
+      (pop-to-buffer (ctbl:cp-get-buffer component))
+      (goto-line 3)
+      (forward-char 1)
+      (read-only-mode 1)
+      ))
+  )
+
+
+(defun update-fx-model (cur)
+  (interactive)
+  (with-current-buffer "tekno"
+   (let* ((body (format "(ns techno.core)
+               (let [fx (techno.sequencer/get-pattern-fx %s)]
+                  (map-indexed (fn [i [k v]]
+                    (cond
+                    (and (map? v) (contains? v :synth))
+                    (conj (map seq (into '() (node-get-controls v (keys (:args v))))) (list :id (:id v)) (list :paused (node-paused? v)) (list :synth (:synth v)) i)
+                    (node? v) (list i (list k (to-sc-id v)))
+                    true (list i (list k v))))
+                (into '() fx))
+                )
+                " cur))
+          (res (nrepl-sync-request:eval
+                                body
+                                (cider-current-connection)
+                                (clomacs-get-session (cider-current-connection))))
+          (res (substring (nrepl-dict-get res "value") 3))
+          (res (read res)))
+     (if (gethash cur fx-data)
+         (clrhash (gethash cur fx-data))
+         (puthash cur (make-hash-table :test 'equal) fx-data))
+     (dolist (p res)
+       (let* ((p-data (gethash cur fx-data))
+              (k (car p))
+              (v (cdr p))
+              (k (if (symbolp k) (symbol-name k) k))
+              (x (if (gethash k p-data)
+                     (clrhash (gethash k p-data))
+                   (puthash k (make-hash-table :test 'equal) p-data)))
+              (data (gethash k p-data))
+              (x
+               (mapcar (lambda (d)
+                         (if (listp d)
+                             (puthash
+                              (if (symbolp (car d)) (symbol-name (car d)) (car d))
+                              (car (cdr d))
+                              data)
+                           (puthash
+                            "val"
+                            d
+                            data)))
+                       v)
+                 ))
+         )
+       )
+     ))
   )
 
 (defun update-pattern-view ()
   (interactive)
+  (with-current-buffer "tekno-pattern"
+      (read-only-mode -1))
   (let ((p (point)))
       (setq current-playing-patterns (get-patterns))
-    (ctbl:cp-set-model techno-patterns (build-pattern-model))
-                                        ;(pop-to-buffer (ctbl:cp-get-buffer techno-patterns))
-    (display-pattern-info)
-    )
+      (ctbl:cp-set-model techno-patterns (build-pattern-model))
+      (save-excursion
+        (ctbl:cp-set-model
+         player-info
+         (ctbl:make-model-from-list
+          (list (list (format "%s" pattern-queue-add) (format "%s" pattern-queue-rm) (format "%s" pattern-queue-mod) tempo (format "%s" (player-active?))))
+          '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active"))))
+    ;(display-pattern-info)
+      )
   )
 
 (defun quantize-recorded-pattern ()
@@ -932,13 +1142,13 @@ found in the current view, return nil."
         (insert (format "Tempo: %s \n" tempo))
         (insert (format "Player Active: %s \n" (player-active?)))
         (insert "\n\n")
-        (insert (format "Pattern: %s %s" key (gethash key pattern-sizes)))
-        (insert "\n\n")
-        (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
+        ;; (insert (format "Pattern: %s %s" key (gethash key pattern-sizes)))
+        ;; (insert "\n\n")
+        ;; (insert "Showing: " (format "%s" pattern-print-list) "\n\n")
 
         ;; (insert "FX: \n" (replace-regexp-in-string "\\\\n" "
         ;; " (get-pattern-fx (ctbl:cp-get-selected-data-cell techno-patterns))) "\n\n")
-                                        ;(insert (get-pattern-struct))
+        ;;                                 (insert (get-pattern-struct))
         (goto-char p)
         (read-only-mode t)
         ))
