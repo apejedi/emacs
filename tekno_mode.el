@@ -835,6 +835,7 @@ found in the current view, return nil."
 
 (defun init-pattern-view ()
   (with-current-buffer (get-buffer-create "tekno")
+    (global-set-key (kbd "C-M-;") 'goto-patterns)
     (read-only-mode -1)
     (erase-buffer)
     (insert "Patterns: \n\n")
@@ -916,7 +917,26 @@ found in the current view, return nil."
                         ("a" . ctbl:navi-move-left)
                         ("d" . ctbl:navi-move-right)
                         ("C-=" . start-stop-player)
-                        ("<tab>" . switch-stack)))
+                        ("<tab>" . switch-stack)
+                        ("M-a" . (lambda ()
+                                   (interactive)
+                                   (let* ((s (ctbl:cp-get-selected-data-cell fx-chooser))
+                                          (p (ctbl:cp-get-selected-data-cell techno-patterns))
+                                          (res (nrepl-sync-request:eval
+                                                (format "(ns techno.core)
+                                                            (let [fx (techno.sequencer/get-pattern-fx %s)
+                                                                  grp (:group fx)
+                                                                  mixer (to-sc-id (:mixer fx))
+                                                                  bus (:bus fx)
+                                                                  x (p/%s [:before mixer] :audio-bus bus :out-bus bus)]
+                                                              (techno.sequencer/add-pattern-fx %s
+                                                                  (to-sc-id x)
+                                                                  x))" p s p)
+                                                (cider-current-connection)
+                                                (clomacs-get-session (cider-current-connection)))))
+                                     (update-fx-model p)
+                                     (update-fx-stack)
+                                     )))))
              :param param
              ))
       (insert "\nStack: \n\n")
@@ -933,6 +953,30 @@ found in the current view, return nil."
                         ("<tab>" . switch-stack)
                         ("M-p" . (lambda () (interactive) (pause-node t)))
                         ("M-s" . (lambda () (interactive) (pause-node nil)))
+                        ("M-r" . (lambda ()
+                                   (interactive)
+                                   (let* ((data (gethash
+                                                 (ctbl:cp-get-selected-data-cell
+                                                  techno-patterns)
+                                                 fx-data))
+                                          (data (if data
+                                                    (gethash
+                                                     (car (ctbl:component-selected fx-stack))
+                                                     data)))
+                                          (id (if data (gethash ":id" data)))
+                                          (p (ctbl:cp-get-selected-data-cell techno-patterns))
+                                          (body (format "(ns techno.core)
+                                                            (let [fx (techno.sequencer/get-pattern-fx %s)
+                                                                  x (some (fn [a] (if (and (map? (second a)) (= (:id (second a)) %s)) (first a))) fx)]
+                                                            (techno.sequencer/rm-pattern-fx %s x))" p id p))
+                                          (res (nrepl-sync-request:eval
+                                                body
+                                                (cider-current-connection)
+                                                (clomacs-get-session (cider-current-connection))))
+                                          )
+                                     (update-fx-model p)
+                                     (update-fx-stack)
+                                     )))
                         ("M-e" . (lambda ()
                                    (interactive)
                                    (let* ((data (gethash
@@ -947,14 +991,20 @@ found in the current view, return nil."
                                           (s (nth 0 (nth (car p)
                                                          (ctbl:component-sorted-data fx-stack))))
                                           (v (read-string "val: ")))
-                                     (puthash (nth (- (cdr p) 1)
-                                                   (hash-table-keys (gethash s data)))
-                                              (string-to-number v)
-                                              (gethash s data))
-                                     (update-fx-stack)
+                                     (if data
+                                         (progn
+                                           (let* ((k (nth (- (cdr p) 1)
+                                                          (hash-table-keys data)))
+                                                  (id (gethash ":id" data))
+                                                  (body (format "(ns techno.core) (ctl %s %s %s) (node-get-control %s %s)" id k (string-to-number v) id k))
+                                                  (res (nrepl-sync-request:eval
+                                                        body
+                                                        (cider-current-connection)
+                                                        (clomacs-get-session (cider-current-connection)))))
+                                               (puthash k (string-to-number v) data)
+                                             (update-fx-stack))))
                                      )
-                                   )))))
-            )
+                                   ))))))
       (ctbl:cp-add-selection-change-hook
        fx-stack
        (lambda () (update-fx-stack)))
@@ -965,6 +1015,15 @@ found in the current view, return nil."
       (forward-char 1)
       (read-only-mode 1)
       ))
+  )
+
+(defun goto-patterns ()
+  (interactive)
+  (pop-to-buffer "tekno")
+  (goto-char
+   (ctbl:find-by-cell-id
+    (ctbl:component-dest techno-patterns)
+    (ctbl:component-selected techno-patterns)))
   )
 
 
