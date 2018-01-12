@@ -621,7 +621,8 @@ found in the current view, return nil."
     (if (stringp err)
         (with-output-to-temp-buffer "*scratch*"
           (print err)))
-      (update-pattern-view))
+    (update-fx-model key)
+    (update-pattern-view))
   )
 
 (defun save-pattern ()
@@ -667,6 +668,7 @@ found in the current view, return nil."
                      pattern-str)
      (cider-current-connection)
      (clomacs-get-session (cider-current-connection)))
+      (update-fx-model pattern) (update-pattern-view)
 )
  )
 
@@ -691,7 +693,9 @@ found in the current view, return nil."
                   [clojure.string :as string]))"
              pattern-str)
      (cider-current-connection)
-     (clomacs-get-session (cider-current-connection))))
+     (clomacs-get-session (cider-current-connection)))
+    (update-fx-model pattern) (update-pattern-view)
+    )
  )
 
 
@@ -755,7 +759,7 @@ found in the current view, return nil."
     (nrepl-sync-request:eval
      (concat "(use
         '[techno.core :as core]
-        '[techno.sequencer :as s]
+        ;'[techno.sequencer :as s]
         '[techno.player :as p]
         ) (" rm-p " core/player " key ")")
      (cider-current-connection)
@@ -835,7 +839,8 @@ found in the current view, return nil."
 
 (defun init-pattern-view ()
   (with-current-buffer (get-buffer-create "tekno")
-    (global-set-key (kbd "C-M-;") 'goto-patterns)
+    (global-set-key (kbd "C-M-;") (lambda () (interactive) (goto-buf "tekno")))
+    (global-set-key (kbd "C-M-p") (lambda () (interactive) (goto-buf "tekno-pattern")))
     (read-only-mode -1)
     (erase-buffer)
     (insert "Patterns: \n\n")
@@ -878,7 +883,7 @@ found in the current view, return nil."
                                       ("C-p" . add-pattern-print)
                                       ("M-p" . rm-pattern-print)
                                       ("C-M-r" . clear-pattern-print)
-                                      ("C-M-p" . pattern-print-add-playing)
+                                      ;("C-M-p" . pattern-print-add-playing)
                                       ("C-=" . start-stop-player)
                                       ("<tab>" . switch-stack)
                                       ("C-M-v" . (lambda ()
@@ -897,7 +902,7 @@ found in the current view, return nil."
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
                      (list (list (format "%s" pattern-queue-add) (format "%s" pattern-queue-rm) (format "%s" pattern-queue-mod) tempo (format "%s" (player-active?))))
-                     '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active"))
+                     '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active" "size"))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
@@ -910,7 +915,7 @@ found in the current view, return nil."
       (setq fx-chooser
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
-                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf")))
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander")))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
@@ -1009,7 +1014,7 @@ found in the current view, return nil."
        fx-stack
        (lambda () (update-fx-stack)))
       (update-pattern-view)
-      ;(ctbl:cp-add-selection-change-hook component 'update-pattern-view)
+      (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
       (pop-to-buffer (ctbl:cp-get-buffer component))
       (goto-line 3)
       (forward-char 1)
@@ -1017,9 +1022,9 @@ found in the current view, return nil."
       ))
   )
 
-(defun goto-patterns ()
+(defun goto-buf (buf)
   (interactive)
-  (pop-to-buffer "tekno")
+  (pop-to-buffer buf)
   (goto-char
    (ctbl:find-by-cell-id
     (ctbl:component-dest techno-patterns)
@@ -1085,11 +1090,27 @@ found in the current view, return nil."
       (setq current-playing-patterns (get-patterns))
       (ctbl:cp-set-model techno-patterns (build-pattern-model))
       (save-excursion
-        (ctbl:cp-set-model
-         player-info
-         (ctbl:make-model-from-list
-          (list (list (format "%s" pattern-queue-add) (format "%s" pattern-queue-rm) (format "%s" pattern-queue-mod) tempo (format "%s" (player-active?))))
-          '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active"))))
+        (let* ((k (ctbl:cp-get-selected-data-cell techno-patterns))
+               (vol (if (gethash k fx-data)
+                        (catch 'vol
+                          (mapc
+                           (lambda (f)
+                             (when (and (hash-table-p f)
+                                        (string-match-p
+                                         (regexp-quote "mixer") (gethash ":synth" f)))
+                               (throw 'vol (gethash ":volume" f)))
+                             )
+                           (hash-table-values (gethash k fx-data)))))))
+            (ctbl:cp-set-model
+             player-info
+             (ctbl:make-model-from-list
+              (list (list (format "%s" pattern-queue-add)
+                          (format "%s" pattern-queue-rm)
+                          (format "%s" pattern-queue-mod) tempo
+                          (format "%s" (player-active?))
+                          (gethash k pattern-sizes)
+                          vol))
+              '("Queue Add" "Queue Rm" "Queue Mod" "Tempo" "Player Active" "Size" "Vol")))))
     ;(display-pattern-info)
       )
   )
@@ -1305,7 +1326,7 @@ res
                                       (ctbl:cp-get-selected-data-cell synth-component))
                                      (start-player)
                                      (update-pattern-view)
-                                     (switch-to-buffer-other-window (get-buffer "tekno")))
+                                     (goto-buf "tekno"))
                                  (let ((s (ctbl:cp-get-selected-data-cell synth-component)))
                                    (if (not (gethash s synth-stack))
                                        (puthash s
