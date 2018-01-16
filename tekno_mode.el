@@ -210,6 +210,8 @@ found in the current view, return nil."
 
 (defun pattern-flush-q ()
   (interactive)
+  (setq current-playing-patterns (get-patterns))
+  (ctbl:cp-set-model techno-patterns (build-pattern-model))
   (let* ()
     (dolist (a pattern-queue-add)
       (add-pattern-key a)
@@ -564,6 +566,8 @@ found in the current view, return nil."
 (defun add-pattern ()
   (interactive)
   (add-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns))
+  (setq current-playing-patterns (get-patterns))
+  (ctbl:cp-set-model techno-patterns (build-pattern-model))
   )
 
 (defun queue-add-pattern ()
@@ -765,6 +769,8 @@ found in the current view, return nil."
 (defun rm-pattern ()
   (interactive)
   (rm-pattern-key (ctbl:cp-get-selected-data-cell techno-patterns))
+  (setq current-playing-patterns (get-patterns))
+  (ctbl:cp-set-model techno-patterns (build-pattern-model))
   )
 (defun rm-pattern-key (key)
   (interactive)
@@ -928,7 +934,7 @@ found in the current view, return nil."
       (setq fx-chooser
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
-                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander")))
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq")))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
@@ -1027,7 +1033,7 @@ found in the current view, return nil."
        fx-stack
        (lambda () (update-fx-stack)))
       (update-pattern-view)
-      (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
+      (ctbl:cp-add-selection-change-hook techno-patterns 'update-pattern-view)
       (pop-to-buffer (ctbl:cp-get-buffer component))
       (goto-line 3)
       (forward-char 1)
