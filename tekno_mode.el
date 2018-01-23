@@ -619,7 +619,7 @@ found in the current view, return nil."
          (attrs (if mute (concat attrs " :volume 0 ") attrs))
          (attrs (concat attrs "}"))
          (add-p (if use-player "p/add-p" "s/add-p"))
-         (body (concat " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
+         (body (format " (import java.util.concurrent.ThreadLocalRandom) (use '[overtone.core]
         '[techno.core :as core]
         '[techno.synths]
         '[overtone.inst.synth]
@@ -629,7 +629,7 @@ found in the current view, return nil."
         '[techno.melody])
          (require '[techno.sequencer :as s]
                   '[techno.player :as p])
-         (" add-p " core/player " pattern " " key " " attrs ")"))
+         (%s core/player %s %s %s)" add-p pattern key attrs))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
@@ -1033,7 +1033,7 @@ found in the current view, return nil."
        fx-stack
        (lambda () (update-fx-stack)))
       (update-pattern-view)
-      (ctbl:cp-add-selection-change-hook techno-patterns 'update-pattern-view)
+      (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
       (pop-to-buffer (ctbl:cp-get-buffer component))
       (goto-line 3)
       (forward-char 1)
