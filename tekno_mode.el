@@ -32,7 +32,10 @@
 (setq root-note "C4")
 (setq scale-type "major")
 (setq div "8")
+(setq step-bars 4)
 (setq highlight-bounds (make-hash-table :test 'equal))
+(setq pattern-positions (make-hash-table :test 'equal))
+(setq pattern-step-mode nil)
 (setq cur-pos nil)
 (setq player-info nil)
 (setq fx-chooser nil)
@@ -738,6 +741,105 @@ found in the current view, return nil."
     )
   )
 
+(defun pattern-mode (step)
+  (with-current-buffer "tekno-pattern"
+    (let* ((start (point))
+           (pattern (buffer-substring-no-properties (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds)))))
+           (body (format  "(ns techno.core)
+                           (p/%s '%s %s \"%s\")"
+                         (if step "step-mode-p" "text-mode-p")
+                         pattern div (gethash "rest-regex" highlight-bounds)))
+           (res (nrepl-sync-request:eval
+                 body
+                 (cider-current-connection)
+                 (clomacs-get-session (cider-current-connection))))
+           ;; (x    (with-current-buffer "*scratch*"
+           ;;         (insert (format "%s"  body))
+           ;;         (insert (format "%s"  res))
+           ;;         ))
+           (res (substring (nrepl-dict-get res "value") 3))
+           (res (replace-regexp-in-string ":|" ":|
+" res))
+           (res (replace-regexp-in-string ")" ")
+" res))
+           )
+
+      (delete-region (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds))))
+      (insert res)
+      (indent-region (point-min) (point-max))
+      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
+      (get-pattern-bounds)
+      (goto-char start)
+
+      ))
+  )
+(defun text-mode-p ()
+  (interactive)
+  (pattern-mode nil)
+  (setq pattern-step-mode nil)
+  )
+(defun step-mode-p ()
+  (interactive)
+  (pattern-mode t)
+  (setq pattern-step-mode t)
+  )
+
+(defun move-p (pos dir shift)
+  (with-current-buffer "tekno-pattern"
+    (let* ((start (point))
+           (pattern (buffer-substring-no-properties (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds)))))
+           (div (gethash "div" highlight-bounds))
+           (reg (gethash "rest-regex" highlight-bounds))
+           (body (format "(ns techno.core)
+                        (p/%s (p/%s '%s %s %s %s \"%s\") %s \"%s\")"
+                         (if pattern-step-mode "step-mode-p" "text-mode-p")
+                         (if shift "shift-step-p" "move-step-p")
+                         pattern div pos dir reg div reg))
+           (res (nrepl-sync-request:eval
+                 body
+                 (cider-current-connection)
+                 (clomacs-get-session (cider-current-connection))))
+           ;; (x    (with-current-buffer "*scratch*"
+           ;;         (insert (format "%s"  body))
+           ;;         (insert (format "%s"  res))
+           ;;         ))
+           (res (substring (nrepl-dict-get res "value") 3))
+           (res (replace-regexp-in-string ":|" ":|
+" res))
+           (res (replace-regexp-in-string ")" ")
+" res)))
+      (delete-region (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds))))
+      (insert res)
+      (indent-region (point-min) (point-max))
+      (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
+      (get-pattern-bounds)
+      (goto-char start)
+      ))
+  )
+(defun shift-right-p ()
+  (interactive)
+  (with-current-buffer "tekno-pattern"
+    (move-p (gethash (point) pattern-positions) ":right" t)
+    )
+  )
+(defun shift-left-p ()
+  (interactive)
+  (with-current-buffer "tekno-pattern"
+    (move-p (gethash (point) pattern-positions) ":left" t)
+    )
+  )
+(defun nudge-left-p ()
+  (interactive)
+  (with-current-buffer "tekno-pattern"
+    (move-p (gethash (point) pattern-positions) ":left" nil)
+    )
+  )
+(defun nudge-right-p ()
+  (interactive)
+  (with-current-buffer "tekno-pattern"
+    (move-p (gethash (point) pattern-positions) ":right" nil)
+    )
+  )
 (defun show-pattern-view (&optional switch)
   (interactive)
   (let* ((key (ctbl:cp-get-selected-data-cell techno-patterns))
@@ -759,6 +861,12 @@ found in the current view, return nil."
       (local-set-key (kbd "C-M-r") 'clear-pattern-print)
       (local-set-key (kbd "C-M-p") 'pattern-print-add-playing)
       (local-set-key (kbd "C-=") 'start-stop-player)
+      (bind-keys* ("<C-right>" . nudge-right-p)
+                  ("<C-left>" . nudge-left-p)
+                  ("<S-left>" . shift-left-p)
+                  ("<S-right>" . shift-right-p)
+                  ("C-M-t" . text-mode-p)
+                  ("C-M-u" . step-mode-p))
       )
     (setq current-pattern key)
     (if switch (switch-to-buffer-other-window buf))
@@ -1033,7 +1141,7 @@ found in the current view, return nil."
        fx-stack
        (lambda () (update-fx-stack)))
       (update-pattern-view)
-      (ctbl:cp-add-selection-change-hook component 'update-pattern-view)
+      (ctbl:cp-add-selection-change-hook techno-patterns 'update-pattern-view)
       (pop-to-buffer (ctbl:cp-get-buffer component))
       (goto-line 3)
       (forward-char 1)
@@ -1044,10 +1152,14 @@ found in the current view, return nil."
 (defun goto-buf (buf)
   (interactive)
   (pop-to-buffer buf)
-  (goto-char
-   (ctbl:find-by-cell-id
-    (ctbl:component-dest techno-patterns)
-    (ctbl:component-selected techno-patterns)))
+  (let* ((dest (ctbl:find-by-cell-id
+                 (ctbl:component-dest techno-patterns)
+                 (ctbl:component-selected techno-patterns))))
+    (goto-char
+     (if dest dest (ctbl:find-by-cell-id
+                    (ctbl:component-dest techno-patterns)
+                    (cons 0 0)))
+     ))
   )
 
 
@@ -1588,10 +1700,17 @@ res
                (clomacs-get-session (cider-current-connection))))
          )
     (clrhash highlight-bounds)
+    (clrhash pattern-positions)
     (dolist (b bounds)
-      (puthash (car b) (cons (car (car (cdr b))) (car (cdr (car (cdr b)))))
-               highlight-bounds))
-    )
+      (if (listp (car (cdr b)))
+        (puthash (car b) (cons (car (car (cdr b))) (car (cdr (car (cdr b)))))
+                 highlight-bounds)
+        (puthash (car b) (car (cdr b))
+                 highlight-bounds))
+      (if (and (not (string= "pattern" (car b))) (not (string= "div" (car b))) (not (string= "rest-regex" (car b))))
+          (dolist (n (number-sequence (car (car (cdr b))) (car (cdr (car (cdr b))))))
+            (puthash n (car b) pattern-positions)))
+      ))
   )
 
 
