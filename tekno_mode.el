@@ -744,6 +744,7 @@ found in the current view, return nil."
 
 (defun pattern-mode (step)
   (with-current-buffer "tekno-pattern"
+    (get-pattern-bounds)
     (let* ((start (point))
            (pattern (buffer-substring-no-properties (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds)))))
            (body (format  "(ns techno.core)
@@ -799,6 +800,7 @@ found in the current view, return nil."
 
 (defun move-p (pos dir shift)
   (with-current-buffer "tekno-pattern"
+    (get-pattern-bounds)
     (let* ((start (point))
            (pattern (buffer-substring-no-properties (+ 1 (car (gethash "pattern" highlight-bounds))) (+ 1 (cdr (gethash "pattern" highlight-bounds)))))
            (div (gethash "div" highlight-bounds))
@@ -1563,6 +1565,16 @@ res
                                  (update-synth-stack)
                                  (set-synth-handler)
                                  )
+                               ))
+                    ("M-c" . (lambda ()
+                               (interactive)
+                               (if (equal (ctbl:cp-get-selected-data-cell category-component) "samples")
+                                   (let* ((s (downcase (ctbl:cp-get-selected-data-cell stack-component)))
+                                         (k (ctbl:cp-get-selected-data-cell synth-component))
+                                         (d (string-match "-\\([a-z]\\).*\\([0-9]\\).wav" s))
+                                         (v (format ":%s%s" (substring (match-string 0 s) 1 2) (substring (match-string 0 s) -5 -4))))
+                                     (kill-new (format "[(drum-s [:%s] %s) []]" k v))
+                                     ))
                                ))
                     ))))
     (dolist (d data)
