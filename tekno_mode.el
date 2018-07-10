@@ -667,7 +667,7 @@ found in the current view, return nil."
         (get-buffer "tekno-pattern")
       (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
       (get-pattern-bounds))
-    (init-step-sequencer)
+    (ignore-errors (init-step-sequencer))
     )
   )
 
