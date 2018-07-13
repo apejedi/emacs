@@ -1554,6 +1554,7 @@ res
 
 
 (defun init-synth-page ()
+  (interactive)
   (get-buffer-create "synth-page")
   (let* ((data (get-synths))
          (keymap (ctbl:define-keymap
@@ -1901,7 +1902,7 @@ res
                                                                              "")))
                                                       "] " "] ")))))
          (body (format
-                "(ns techno.core)
+                "(ns techno.synths)
 (if (not (node-active? synth-grp))
     (def synth-grp (group :tail 2)))
 (let [params %s
