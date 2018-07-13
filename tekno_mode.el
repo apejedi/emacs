@@ -1896,7 +1896,7 @@ res
                                              (concat " [" k " ["
                                                       (apply 'concat
                                                              (loop for p being the hash-keys of (gethash k synth-params)
-                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")))
+                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")) (not (equal p "gate")))
                                                                                (concat ":" p " " (number-to-string (gethash p (gethash k synth-params))) " ")
                                                                              "")))
                                                       "] " "] ")))))
@@ -1904,19 +1904,21 @@ res
                 "(ns techno.core)
 (if (not (node-active? synth-grp))
     (def synth-grp (group :tail 2)))
-(let [params %s]
+(let [params %s
+      args (fn [s m] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
+                         (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
+                         (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq1\"))) [:freq1 (midi->hz (:data1 m))]
+                         true []))]
     (on-event [:midi :note-on]
               (fn [m]
-                  (let [args (fn [s] (cond (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"note\"))) [:note (:data1 m)]
-                                           (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq\"))) [:freq (midi->hz (:data1 m))]
-                                           (not (= -1 (.indexOf (vec (map (fn [p] (:name p)) (:params s))) \"freq1\"))) [:freq1 (midi->hz (:data1 m))]
-                                           true []))
-                      play (fn [synth args]
+                  (let [play (fn [synth args]
                                (techno.recorder/record-action [synth args (:data1 m)])
                                (apply synth (concat [[:head synth-grp]] (vec args)))
                              )]
                     (doseq [[s p] params]
-                           (swap! live-synths assoc-in [(:name s) (:data1 m)] (play s (concat p (args s))))
+                           (if (first (filter (fn [p] (= (keyword (:name p)) :gate)) (:params s)))
+                               (swap! live-synths assoc-in [(:name s) (:data1 m)] (play s (concat p (args s m))))
+                             (play s (concat p (args s m))))
                            )
                   ))
               ::prophet-midi)
@@ -1924,9 +1926,10 @@ res
               (fn [m]
                   (let [n (:data1 m)]
                     (doseq [[s p] params]
-                      (let [syn (get-in live-synths [(:name s) (:data1 m)])]
-                          (when (and syn (node-active? syn) (first (filter (fn [p] (= (keyword (:name p)) :gate)) (:params s))))
-                            (ctl syn :gate 0))))
+                      (let [syn (get-in @live-synths [(:name s) (:data1 m)])]
+                        (when (and syn (node-active? syn) (first (filter (fn [p] (= (keyword (:name p)) :gate)) (:params s))))
+                          (techno.recorder/record-action [s (concat p (args s m) [:gate 0]) (:data1 m)])
+                          (ctl syn :gate 0))))
                   ))
               ::prophet-midi-off)
     )" synths))
@@ -1935,9 +1938,9 @@ res
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection))))
          )
-   (with-current-buffer "*scratch*"
-      (insert (format "%s" body))
-     (insert (format "%s" res)))
+   ;; (with-current-buffer "*scratch*"
+   ;;    (insert (format "%s" body))
+   ;;   (insert (format "%s" res)))
   ))
 
 
