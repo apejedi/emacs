@@ -1915,19 +1915,29 @@ res
                                (techno.recorder/record-action [synth args (:data1 m)])
                                (apply synth (concat [[:head synth-grp]] (vec args)))
                              )]
-                  (doseq [[s p] params]
-                         (play s (concat p (args s))))
+                    (doseq [[s p] params]
+                           (swap! live-synths assoc-in [(:name s) (:data1 m)] (play s (concat p (args s))))
+                           )
                   ))
-              ::prophet-midi))" synths))
+              ::prophet-midi)
+    (on-event [:midi :note-off]
+              (fn [m]
+                  (let [n (:data1 m)]
+                    (doseq [[s p] params]
+                      (let [syn (get-in live-synths [(:name s) (:data1 m)])]
+                          (when (and syn (node-active? syn) (first (filter (fn [p] (= (keyword (:name p)) :gate)) (:params s))))
+                            (ctl syn :gate 0))))
+                  ))
+              ::prophet-midi-off)
+    )" synths))
          (res (nrepl-sync-request:eval
                body
                (cider-current-connection)
                (clomacs-get-session (cider-current-connection))))
          )
-    ;; (with-current-buffer "*scratch*"
-    ;;   (insert (format "%s"  body))
-    ;;   (insert (format "%s"  res))
-    ;;   )
+   (with-current-buffer "*scratch*"
+      (insert (format "%s" body))
+     (insert (format "%s" res)))
   ))
 
 
