@@ -123,11 +123,16 @@ found in the current view, return nil."
                        (get-buffer buf)
                      (buffer-string)))
          (contents  (replace-regexp-in-string "\"" "\\\\\"" contents))
+         ;; (body (format  "(ns techno.core)
+         ;;                   (get-patterns-from-string \"%s\" \"%s\")"
+         ;;                contents sketch ))
+         ;; (res (nrepl-sync-request:eval
+         ;;       body
+         ;;       (cider-current-connection)
+         ;;       (clomacs-get-session (cider-current-connection))))
          (data (get-patterns-from-string contents sketch))
          (table (make-hash-table :test 'equal))
          (playing (get-patterns)))
-    ;; (with-output-to-temp-buffer "*scratch*"
-    ;;   (print (car el)))
     (setq tempo "80")
     (dolist (el data)
       (if (not (string= (car el) ":tempo"))
@@ -1610,8 +1615,8 @@ res
                                (if (equal (ctbl:cp-get-selected-data-cell category-component) "samples")
                                    (let* ((s (downcase (ctbl:cp-get-selected-data-cell stack-component)))
                                          (k (ctbl:cp-get-selected-data-cell synth-component))
-                                         (d (string-match "-\\([a-z]\\).*\\([0-9]\\).wav" s))
-                                         (v (format ":%s%s" (substring (match-string 0 s) 1 2) (substring (match-string 0 s) -5 -4))))
+                                         (d (string-match "\\([a-z]+\\)[^a-z0-9]*\\([0-9]+\\)*.wav" s))
+                                         (v (format ":%s%s" (match-string 1 s) (substring (match-string 0 s) -5 -4))))
                                      (kill-new (format "[(drum-s [:%s] %s) []]" k v))
                                      ))
                                ))
@@ -1693,92 +1698,100 @@ res
   )
 
 (defun init-step-sequencer ()
-  (save-excursion
-    (clrhash step-mode-hash)
-    (let* ((bounds (get-pattern-bounds))
-           (text (with-current-buffer "tekno-pattern" (buffer-string)))
-           (body (format "(ns techno.core)
+  (clrhash step-mode-hash)
+  (let* ((bounds (get-pattern-bounds))
+         (text (with-current-buffer "tekno-pattern" (buffer-string)))
+         (body (format "(ns techno.core)
                         (p/p-size %s)"
-                         text))
-           (div (gethash "div" highlight-bounds))
-           (res (nrepl-sync-request:eval
-                 body
-                 (cider-current-connection)
-                 (clomacs-get-session (cider-current-connection))))
-           (size (string-to-number (substring (nrepl-dict-get res "value") 3)))
-           (keymap (ctbl:define-keymap
-                    '(
-                      ("w" . ctbl:navi-move-up)
-                      ("s" . ctbl:navi-move-down)
-                      ("a" . ctbl:navi-move-left)
-                      ("d" . ctbl:navi-move-right)
-                      ("c" . ctbl:navi-jump-to-column)
-                      ("p" . (lambda ()
-                               (interactive)
-                               (let* ((bar (+ 1 (car (ctbl:component-selected step-component))))
-                                      (note (+ 1 (cdr (ctbl:component-selected step-component))))
-                                      (k (format "[%s %s]" bar note))
-                                      (v (gethash k step-mode-hash))
-                                      (text (substring-no-properties (car kill-ring)))
-                                      (v (if v (replace-regexp-in-string "
+                       text))
+         (div (gethash "div" highlight-bounds))
+         (res (nrepl-sync-request:eval
+               body
+               (cider-current-connection)
+               (clomacs-get-session (cider-current-connection))))
+         (size (string-to-number (substring (nrepl-dict-get res "value") 3)))
+         (keymap (ctbl:define-keymap
+                  '(
+                    ("w" . ctbl:navi-move-up)
+                    ("s" . ctbl:navi-move-down)
+                    ("a" . ctbl:navi-move-left)
+                    ("d" . ctbl:navi-move-right)
+                    ("c" . ctbl:navi-jump-to-column)
+                    ("p" . (lambda ()
+                             (interactive)
+                             (let* ((bar (+ 1 (car (ctbl:component-selected step-component))))
+                                    (note (+ 1 (cdr (ctbl:component-selected step-component))))
+                                    (k (format "[%s %s]" bar note))
+                                    (v (gethash k step-mode-hash))
+                                    (text (substring-no-properties (car kill-ring)))
+                                    (v (if v (replace-regexp-in-string "
 " "" v) "nil"))
-                                      (body (format " (let [a '%s b '%s] (if (vector? a) (if (vector? b) (into a b) (conj a b)) (if a (if (vector? b) (into b [a]) [a b]) b)))"
-                                                    v text))
-                                      (res (nrepl-sync-request:eval
-                                            body
-                                            (cider-current-connection)
-                                            (clomacs-get-session (cider-current-connection))))
-                                      (res (nrepl-dict-get res "value"))
-                                      )
-                                 ;; (with-current-buffer "*scratch*"
-                                 ;;   (insert (format "%s" res)))
-                                 (puthash k
-                                          res
-                                          step-mode-hash)
+                                    (body (format " (let [a '%s b '%s] (if (vector? a) (if (vector? b) (into a b) (conj a b)) (if a (if (vector? b) (into b [a]) [a b]) b)))"
+                                                  v text))
+                                    (res (nrepl-sync-request:eval
+                                          body
+                                          (cider-current-connection)
+                                          (clomacs-get-session (cider-current-connection))))
+                                    (res (nrepl-dict-get res "value"))
+                                    )
+                               ;; (with-current-buffer "*scratch*"
+                               ;;   (insert (format "%s" res)))
+                               (puthash k
+                                        res
+                                        step-mode-hash)
+                               (save-step-mode-p)
+                               )
+                             ))
+                    ("x" . (lambda ()
+                             (interactive)
+                             (let* ((bar (+ 1 (car (ctbl:component-selected step-component))))
+                                    (note (+ 1 (cdr (ctbl:component-selected step-component))))
+                                    (k (format "[%s %s]" bar note)))
+                               (remhash k
+                                        step-mode-hash))
+                             (save-step-mode-p)))
+                    ("C-x C-z" . save-step-mode-p)
+                    ("M-e" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component)))))
+                                      (c (gethash k step-mode-hash))
+                                      (v (read-string "val: " c)))
+                                 (puthash k v step-mode-hash)
                                  (save-step-mode-p)
                                  )
                                ))
-                      ("C-x C-z" . save-step-mode-p)
-                      ("M-e" . (lambda ()
-                                   (interactive)
-                                   (let* ((k (format "[%s %s]"
-                                                     (+ 1 (car (ctbl:component-selected step-component)))
-                                                     (+ 1 (cdr (ctbl:component-selected step-component)))))
-                                          (c (gethash k step-mode-hash))
-                                          (v (read-string "val: " c)))
-                                     (puthash k v step-mode-hash)
-                                     (save-step-mode-p)
-                                     )
-                                   ))
 
-                      )))
-           (param (copy-ctbl:param ctbl:default-rendering-param))
-           (x (setf (ctbl:param-display-header param) nil))
-           (meh (setf (ctbl:param-bg-colors param)
-                      (lambda (model row-id col-id str)
-                        ;; (with-current-buffer "*scratch*"
-                        ;;   (insert (format "%s %s" row-id col-id)))
-                        (if (gethash (format "[%s %s]" (+ 1 row-id)
-                                             (+ 1 col-id)) step-mode-hash)
-                            "blue5"
-                          "black"))))
-           (slots (loop for k in (number-sequence 1 (/ size div))
-                        collect (number-sequence 1 div)))
-           (x (dolist (b (number-sequence 1 (/ size div)))
-                (dolist (n (number-sequence 1 div))
-                  (let* ((k (format "[%s %s]" b n))
-                         (v (gethash k highlight-bounds))
-                         (action (if v (with-current-buffer "tekno-pattern"
-                                         (buffer-substring-no-properties
-                                          (car v) (cdr v))) nil)))
-                    (if action
-                        (puthash k
-                                 action
-                                 step-mode-hash)))
-                  )))
-           )
-      (get-buffer-create "step-sequencer")
-      (with-current-buffer "step-sequencer"
+                    )))
+         (param (copy-ctbl:param ctbl:default-rendering-param))
+         (x (setf (ctbl:param-display-header param) nil))
+         (meh (setf (ctbl:param-bg-colors param)
+                    (lambda (model row-id col-id str)
+                      ;; (with-current-buffer "*scratch*"
+                      ;;   (insert (format "%s %s" row-id col-id)))
+                      (if (gethash (format "[%s %s]" (+ 1 row-id)
+                                           (+ 1 col-id)) step-mode-hash)
+                          "blue5"
+                        "black"))))
+         (slots (loop for k in (number-sequence 1 (/ size div))
+                      collect (number-sequence 1 div)))
+         (x (dolist (b (number-sequence 1 (/ size div)))
+              (dolist (n (number-sequence 1 div))
+                (let* ((k (format "[%s %s]" b n))
+                       (v (gethash k highlight-bounds))
+                       (action (if v (with-current-buffer "tekno-pattern"
+                                       (buffer-substring-no-properties
+                                        (car v) (cdr v))) nil)))
+                  (if action
+                      (puthash k
+                               action
+                               step-mode-hash)))
+                )))
+         )
+    (get-buffer-create "step-sequencer")
+    (with-current-buffer "step-sequencer"
+      (let* ((key (if step-component (ctbl:component-selected step-component))))
         (erase-buffer)
         (setq step-component (ctbl:create-table-component-region
                               :model (ctbl:make-model-from-list
@@ -1800,13 +1813,11 @@ res
                                               (+ 1 (cdr (ctbl:component-selected step-component))))
                                       step-mode-hash))))
            ))
-        ;; (goto-char
-        ;;  (ctbl:find-by-cell-id
-        ;;   (ctbl:component-dest step-component)
-        ;;   (cons 0 0))
-        ;;  )
+        (if key
+            (ctbl:cp-set-selected-cell step-component key))
         )
-      ))
+      )
+    )
   )
 
 (defun set-scale ()
