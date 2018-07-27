@@ -27,6 +27,7 @@
 (setq category-component nil)
 (setq synth-component nil)
 (setq stack-component nil)
+(setq step-component nil)
 (setq categories (make-hash-table :test 'equal))
 (setq synths (make-hash-table :test 'equal))
 (setq synth-defaults (make-hash-table :test 'equal))
