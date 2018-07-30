@@ -1862,7 +1862,8 @@ res
                           (loop for p being the hash-keys of (gethash k synth-params)
                                 collect (if (and (not (equal p "note"))
                                                  (not (equal p "freq"))
-                                                 (not (equal p "out-bus")))
+                                                 (not (equal p "out-bus"))
+                                                 (not (equal p "outBus")))
                                             (concat ":" p " "
                                                     (number-to-string
                                                      (gethash p (gethash k synth-params)))
@@ -1909,7 +1910,7 @@ res
                                              (concat " [" k " ["
                                                       (apply 'concat
                                                              (loop for p being the hash-keys of (gethash k synth-params)
-                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")) (not (equal p "gate")))
+                                                                   collect (if (and (not (equal p "note")) (not (equal p "freq")) (not (equal p "out-bus")) (not (equal p "outBus")) (not (equal p "gate")))
                                                                                (concat ":" p " " (number-to-string (gethash p (gethash k synth-params))) " ")
                                                                              "")))
                                                       "] " "] ")))))
