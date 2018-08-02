@@ -1163,7 +1163,7 @@ found in the current view, return nil."
       (setq fx-chooser
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
-                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq")))
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq" "stuttertest")))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
@@ -1175,16 +1175,22 @@ found in the current view, return nil."
                                    (interactive)
                                    (let* ((s (ctbl:cp-get-selected-data-cell fx-chooser))
                                           (p (ctbl:cp-get-selected-data-cell techno-patterns))
+                                          (s (if (string-match-p
+                                                  (regexp-quote "p-.*") s) (concat "p/" s) s))
+                                          (out-bus (if (string-match-p
+                                                        (regexp-quote "p-.*") p) "out-bus" "outBus"))
+                                          (audio-bus (if (string-match-p
+                                                        (regexp-quote "p-.*") p) "audio-bus" "audioBus"))
                                           (res (nrepl-sync-request:eval
                                                 (format "(ns techno.core)
                                                             (let [fx (techno.sequencer/get-pattern-fx %s)
                                                                   grp (:group fx)
                                                                   mixer (to-sc-id (:mixer fx))
                                                                   bus (:bus fx)
-                                                                  x (p/%s [:before mixer] :audio-bus bus :out-bus bus)]
+                                                                  x (%s [:before mixer] :%s bus :%s bus)]
                                                               (techno.sequencer/add-pattern-fx %s
                                                                   (to-sc-id x)
-                                                                  x))" p s p)
+                                                                  x))" p s audio-bus out-bus p)
                                                 (cider-current-connection)
                                                 (clomacs-get-session (cider-current-connection)))))
                                      (update-fx-model p)
@@ -1292,7 +1298,7 @@ found in the current view, return nil."
                   (map-indexed (fn [i [k v]]
                     (cond
                     (and (map? v) (contains? v :synth))
-                    (conj (map seq (into '() (node-get-controls v (keys (:args v))))) (list :id (:id v)) (list :paused (node-paused? v)) (list :synth (:synth v)) i)
+                    (conj (map seq (into '() (node-get-controls v (map (fn [c] (get c :name)) (:params (var-get (resolve (symbol (:synth v ))))))))) (list :id (:id v)) (list :paused (node-paused? v)) (list :synth (:synth v)) i)
                     (node? v) (list i (list k (to-sc-id v)))
                     true (list i (list k v))))
                 (into '() fx))
