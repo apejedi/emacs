@@ -1085,6 +1085,7 @@ found in the current view, return nil."
   )
 
 (defun init-pattern-view ()
+  (interactive)
   (with-current-buffer (get-buffer-create "tekno")
     (global-set-key (kbd "C-M-;") (lambda () (interactive) (goto-buf "tekno")))
     (global-set-key (kbd "C-M-p") (lambda () (interactive) (goto-buf "tekno-pattern")))
@@ -1163,7 +1164,7 @@ found in the current view, return nil."
       (setq fx-chooser
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
-                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq" "stuttertest")))
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq" "stuttertest" "scramble" "onsetDelay")))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
