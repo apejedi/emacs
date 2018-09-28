@@ -37,6 +37,7 @@
 (setq div "8")
 (setq step-bars 4)
 (setq highlight-bounds (make-hash-table :test 'equal))
+(setq step-bounds (make-hash-table :test 'equal))
 (setq pattern-positions (make-hash-table :test 'equal))
 (setq pattern-step-mode nil)
 (setq cur-pos nil)
@@ -78,15 +79,15 @@ is equal to cell-id in the current table view. If CELL-ID is not
 found in the current view, return nil."
   (loop
    with pos = (ctbl:dest-point-min dest)
-   ;with pos = (ctbl:find-position-fast dest cell-id)
-   ;with pos = (point-min)
-        with end = (ctbl:dest-point-max dest)
-        for next = (next-single-property-change pos 'ctbl:cell-id nil end)
-        for text-cell = (and next (ctbl:cursor-to-cell next))
-        while (and next (< next end)) do
-        (if (and text-cell (equal cell-id text-cell))
-            (return next))
-        (setq pos next)))
+                                        ;with pos = (ctbl:find-position-fast dest cell-id)
+                                        ;with pos = (point-min)
+   with end = (ctbl:dest-point-max dest)
+   for next = (next-single-property-change pos 'ctbl:cell-id nil end)
+   for text-cell = (and next (ctbl:cursor-to-cell next))
+   while (and next (< next end)) do
+   (if (and text-cell (equal cell-id text-cell))
+       (return next))
+   (setq pos next)))
 
 (defun ctbl:dest-ol-selection-set (dest cell-id)
   "[internal] Put a selection overlay on CELL-ID. The selection overlay can be
@@ -871,6 +872,7 @@ found in the current view, return nil."
       (align-regexp (point-min) (point-max) "\\(\\s-*\\):|")
       (get-pattern-bounds)
       (goto-char start)
+      (init-step-sequencer)
       ))
   )
 (defun shift-right-p ()
@@ -1085,6 +1087,7 @@ found in the current view, return nil."
   )
 
 (defun init-pattern-view ()
+  (interactive)
   (with-current-buffer (get-buffer-create "tekno")
     (global-set-key (kbd "C-M-;") (lambda () (interactive) (goto-buf "tekno")))
     (global-set-key (kbd "C-M-p") (lambda () (interactive) (goto-buf "tekno-pattern")))
@@ -1706,6 +1709,8 @@ res
 
 (defun init-step-sequencer ()
   (clrhash step-mode-hash)
+  (clrhash step-bounds)
+  (get-buffer-create "step-sequencer")
   (let* ((bounds (get-pattern-bounds))
          (text (with-current-buffer "tekno-pattern" (buffer-string)))
          (body (format "(ns techno.core)
@@ -1769,7 +1774,54 @@ res
                                  (save-step-mode-p)
                                  )
                                ))
-
+                    ("M-c" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component)))))
+                                      (c (gethash k step-mode-hash)))
+                                 (kill-new c))
+                               ))
+                    ("C-<right>" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component))))))
+                                 (move-p k ":right" nil))
+                               ))
+                    ("C-<left>" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component))))))
+                                 (move-p k ":left" nil))
+                               ))
+                    ("<S-right>" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component))))))
+                                 (move-p k ":right" t))
+                               ))
+                    ("<S-left>" . (lambda ()
+                               (interactive)
+                               (let* ((k (format "[%s %s]"
+                                                 (+ 1 (car (ctbl:component-selected step-component)))
+                                                 (+ 1 (cdr (ctbl:component-selected step-component))))))
+                                 (move-p k ":left" t))
+                               ))
+                    ("C-x C-a" . (lambda ()
+                               (interactive)
+                               (save-add-pattern)
+                               ))
+                    ("C-x C-z" . (lambda ()
+                               (interactive)
+                               (save-pattern)
+                               ))
+                    ("C-=" . (lambda ()
+                               (interactive)
+                               (start-stop-player)
+                               ))
                     )))
          (param (copy-ctbl:param ctbl:default-rendering-param))
          (x (setf (ctbl:param-display-header param) nil))
@@ -1793,10 +1845,10 @@ res
                   (if action
                       (puthash k
                                action
-                               step-mode-hash)))
+                               step-mode-hash))
+                  )
                 )))
          )
-    (get-buffer-create "step-sequencer")
     (with-current-buffer "step-sequencer"
       (let* ((key (if step-component (ctbl:component-selected step-component))))
         (erase-buffer)
@@ -1824,6 +1876,23 @@ res
             (ctbl:cp-set-selected-cell step-component key))
         )
       )
+    (dolist (b (number-sequence 1 (/ size div)))
+      (dolist (n (number-sequence 1 div))
+        (let* ((k (format "[%s %s]" b n))
+               (step-a (with-current-buffer "step-sequencer"
+                         (ctbl:find-by-cell-id
+                          (ctbl:component-dest step-component)
+                          (ctbl:cell-id (- b 1) (- n 1)))))
+               (step-b (with-current-buffer "step-sequencer"
+                         (next-single-property-change
+                          step-a
+                          'ctbl:cell-id nil
+                          (ctbl:dest-point-max
+                           (ctbl:component-dest step-component)))))
+               )
+          (puthash k (cons step-a step-b) step-bounds)
+          )
+        ))
     )
   )
 
@@ -1994,10 +2063,18 @@ res
   (interactive)
   )
 
+(defun highlight-step-pos (&optional string)
+  (interactive)
+  )
+
 (progn
   (define-eval-sexp-fu-flash-command highlight-pattern-pos
     (eval-sexp-fu-flash (lambda ()
                           (gethash cur-pos highlight-bounds)
+                          )))
+  (define-eval-sexp-fu-flash-command highlight-step-pos
+    (eval-sexp-fu-flash (lambda ()
+                          (gethash cur-pos step-bounds)
                           )))
   (tekno-server-start)
   )

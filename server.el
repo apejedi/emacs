@@ -33,11 +33,16 @@
 (defun tekno-server-filter (proc string)
   ;; (with-current-buffer "*tekno-server*"
   ;;   (insert (format "got %s\n" string)))
-  (let ((buf (get-buffer "tekno-pattern")))
+  (let ((buf (get-buffer "tekno-pattern"))
+        (buf2 (get-buffer "step-sequencer")))
     (if (and buf (get-buffer-window buf)) ;(string= "tekno-pattern" (buffer-name))
           (with-current-buffer buf
             (setq cur-pos string)
-            (highlight-pattern-pos string))))
+            (highlight-pattern-pos string)))
+    (if (and buf2 (get-buffer-window buf2)) ;(string= "tekno-pattern" (buffer-name))
+          (with-current-buffer buf2
+            (setq cur-pos string)
+            (highlight-step-pos string))))
   )
 
 (defun tekno-server-sentinel (proc msg)
