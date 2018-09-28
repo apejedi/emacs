@@ -1166,7 +1166,7 @@ found in the current view, return nil."
       (setq fx-chooser
             (ctbl:create-table-component-region
              :model (ctbl:make-model-from-list
-                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq" "stuttertest")))
+                     '(("p-delay" "p-reverb" "p-low-shelf" "p-hi-shelf" "p-pitch-shift" "p-compander" "p-peak-eq" "stuttertest" "scramble" "onsetDelay")))
              :keymap (ctbl:define-keymap
                       '(("w" . ctbl:navi-move-up)
                         ("s" . ctbl:navi-move-down)
