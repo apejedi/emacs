@@ -993,6 +993,7 @@ found in the current view, return nil."
     (setq current-pattern key)
     (if switch (switch-to-buffer-other-window buf))
     (get-pattern-bounds)
+    (ignore-errors (init-step-sequencer))
     )
   )
 
